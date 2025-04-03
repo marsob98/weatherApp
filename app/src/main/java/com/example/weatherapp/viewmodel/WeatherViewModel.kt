@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.data.remote.model.ForecastResponse
 import com.example.weatherapp.data.remote.model.WeatherResponse
 import com.example.weatherapp.domain.repository.WeatherRepository
-import com.example.weatherapp.utils.Constants
+import com.example.weatherapp.ui.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

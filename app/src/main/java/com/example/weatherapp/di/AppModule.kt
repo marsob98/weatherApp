@@ -1,10 +1,15 @@
 package com.example.weatherapp.di
 
+import android.content.Context
+import androidx.room.Room
+import com.example.weatherapp.data.local.dao.FavouriteDao
+import com.example.weatherapp.data.local.database.WeatherDatabase
 import com.example.weatherapp.data.remote.api.WeatherApi
 import com.example.weatherapp.ui.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

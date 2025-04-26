@@ -10,8 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
-import androidx.compose
-.runtime.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -26,9 +25,9 @@ import com.example.weatherapp.viewmodel.WeatherViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoritesScreen(
+    weatherViewModel: WeatherViewModel,
     onNavigateBack: () -> Unit,
-    favouriteViewModel: FavouriteViewModel = hiltViewModel(),
-    weatherViewModel: WeatherViewModel = hiltViewModel()
+    favouriteViewModel: FavouriteViewModel = hiltViewModel()
 ) {
     val favourites by favouriteViewModel.favourites.collectAsStateWithLifecycle()
 

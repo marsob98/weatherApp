@@ -17,14 +17,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.weatherapp.viewmodel.WeatherViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    onNavigateBack: () -> Unit,
-    viewModel: WeatherViewModel = hiltViewModel()
+    weatherViewModel: WeatherViewModel,
+    onNavigateBack: () -> Unit
 ) {
     var searchQuery by remember { mutableStateOf(TextFieldValue()) }
     var cities by remember { mutableStateOf(listOf<String>()) }
@@ -85,11 +84,8 @@ fun SearchScreen(
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         unfocusedTextColor = Color.White,
                         focusedTextColor = Color.White,
-
                         unfocusedPlaceholderColor = Color.White.copy(alpha = 0.5f),
                         focusedPlaceholderColor = Color.White.copy(alpha = 0.5f),
-
-                        // Te parametry możesz zachować bez zmian
                         cursorColor = Color.White,
                         focusedBorderColor = Color.White,
                         unfocusedBorderColor = Color.White.copy(alpha = 0.5f)
@@ -103,7 +99,7 @@ fun SearchScreen(
                         CityItem(
                             city = city,
                             onClick = {
-                                viewModel.getWeatherForCity(city)
+                                weatherViewModel.getWeatherForCity(city)
                                 onNavigateBack()
                             }
                         )

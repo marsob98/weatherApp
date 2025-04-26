@@ -17,8 +17,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.weatherapp.ui.components.CurrentWeatherCard
 import com.example.weatherapp.ui.components.DailyForecastSection
 import com.example.weatherapp.ui.components.HourlyForecastSection
@@ -28,15 +26,14 @@ import com.example.weatherapp.viewmodel.WeatherViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    weatherViewModel: WeatherViewModel,
     onNavigateToSearch: () -> Unit,
-    onNavigateToFavorites: () -> Unit,
-    viewModel: WeatherViewModel = hiltViewModel()
-
+    onNavigateToFavorites: () -> Unit
 ) {
-    val currentWeather = viewModel.currentWeatherState.value
-    val forecast = viewModel.forecastState.value
-    val isLoading = viewModel.isLoading.value
-    val error = viewModel.error.value
+    val currentWeather = weatherViewModel.currentWeatherState.value
+    val forecast = weatherViewModel.forecastState.value
+    val isLoading = weatherViewModel.isLoading.value
+    val error = weatherViewModel.error.value
 
     val backgroundBrush = remember {
         Brush.verticalGradient(

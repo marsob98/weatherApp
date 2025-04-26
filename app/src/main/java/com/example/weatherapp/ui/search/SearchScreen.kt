@@ -17,16 +17,35 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.weatherapp.data.remote.model.GeocodingResponse
 import com.example.weatherapp.viewmodel.WeatherViewModel
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, FlowPreview::class)
 @Composable
 fun SearchScreen(
     weatherViewModel: WeatherViewModel,
     onNavigateBack: () -> Unit
 ) {
     var searchQuery by remember { mutableStateOf(TextFieldValue()) }
-    var cities by remember { mutableStateOf(listOf<String>()) }
+    val searchResults by weatherViewModel.searchResults.collectAsStateWithLifecycle()
+    val isSearching = weatherViewModel.isSearching.value
+
+    // Debounce do wyszukiwania
+    val searchQueryFlow = remember { MutableStateFlow("") }
+
+    LaunchedEffect(Unit) {
+        searchQueryFlow
+            .debounce(500) // 500ms opóźnienia
+            .filter { it.isNotEmpty() && it.length >= 3 }
+            .distinctUntilChanged()
+            .collect {
+                weatherViewModel.searchCities(it)
+            }
+    }
 
     val backgroundBrush = remember {
         Brush.verticalGradient(
@@ -35,19 +54,6 @@ fun SearchScreen(
                 Color(0xFF1C1B33)
             )
         )
-    }
-
-    LaunchedEffect(searchQuery.text) {
-        if (searchQuery.text.length >= 3) {
-            // W rzeczywistej aplikacji pobieralibyśmy listę miast z API
-            // Na potrzeby tego przykładu użyjemy statycznej listy
-            cities = listOf(
-                "Warszawa", "Kraków", "Wrocław", "Poznań", "Gdańsk",
-                "Szczecin", "Łódź", "Lublin", "Katowice", "Białystok"
-            ).filter { it.contains(searchQuery.text, ignoreCase = true) }
-        } else {
-            cities = emptyList()
-        }
     }
 
     Scaffold(
@@ -75,7 +81,10 @@ fun SearchScreen(
             ) {
                 OutlinedTextField(
                     value = searchQuery,
-                    onValueChange = { searchQuery = it },
+                    onValueChange = {
+                        searchQuery = it
+                        searchQueryFlow.value = it.text
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = { Text("Wpisz nazwę miasta...") },
                     leadingIcon = {
@@ -94,15 +103,22 @@ fun SearchScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                LazyColumn {
-                    items(cities) { city ->
-                        CityItem(
-                            city = city,
-                            onClick = {
-                                weatherViewModel.getWeatherForCity(city)
-                                onNavigateBack()
-                            }
-                        )
+                if (isSearching) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        color = Color.White
+                    )
+                } else {
+                    LazyColumn {
+                        items(searchResults) { result ->
+                            CitySearchResult(
+                                result = result,
+                                onClick = {
+                                    weatherViewModel.getWeatherForCity(result.name)
+                                    onNavigateBack()
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -111,8 +127,8 @@ fun SearchScreen(
 }
 
 @Composable
-fun CityItem(
-    city: String,
+fun CitySearchResult(
+    result: GeocodingResponse,
     onClick: () -> Unit
 ) {
     Card(
@@ -131,13 +147,19 @@ fun CityItem(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = city,
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.White
-            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = result.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.White
+                )
 
-            Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "${result.state ?: ""}, ${result.country}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.7f)
+                )
+            }
 
             IconButton(onClick = onClick) {
                 Icon(

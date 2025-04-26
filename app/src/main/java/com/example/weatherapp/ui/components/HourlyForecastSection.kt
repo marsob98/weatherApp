@@ -67,7 +67,11 @@ fun HourlyForecastItem(forecastItem: ForecastItem) {
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        // Tu powinna być ikona pogody
+        // Dodajemy ikonę pogody
+        WeatherIcon(
+            iconCode = forecastItem.weather.firstOrNull()?.icon ?: "",
+            modifier = Modifier.size(28.dp)
+        )
 
         Spacer(modifier = Modifier.height(4.dp))
 

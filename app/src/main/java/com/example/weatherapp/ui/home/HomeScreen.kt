@@ -6,21 +6,22 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.weatherapp.ui.components.CurrentWeatherCard
 import com.example.weatherapp.ui.components.DailyForecastSection
 import com.example.weatherapp.ui.components.HourlyForecastSection
 import com.example.weatherapp.ui.components.WeatherDetailsCard
+import com.example.weatherapp.viewmodel.FavouriteViewModel
 import com.example.weatherapp.viewmodel.WeatherViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,12 +29,25 @@ import com.example.weatherapp.viewmodel.WeatherViewModel
 fun HomeScreen(
     weatherViewModel: WeatherViewModel,
     onNavigateToSearch: () -> Unit,
-    onNavigateToFavorites: () -> Unit
+    onNavigateToFavorites: () -> Unit,
+    favouriteViewModel: FavouriteViewModel = hiltViewModel()
 ) {
     val currentWeather = weatherViewModel.currentWeatherState.value
     val forecast = weatherViewModel.forecastState.value
     val isLoading = weatherViewModel.isLoading.value
     val error = weatherViewModel.error.value
+
+    // Sprawdzanie, czy aktualne miasto jest w ulubionych
+    var isFavourite by remember { mutableStateOf(false) }
+
+    // Aktualizacja statusu ulubionego przy zmianie aktualnego miasta
+    LaunchedEffect(currentWeather?.name) {
+        currentWeather?.name?.let { cityName ->
+            favouriteViewModel.isFavourite(cityName) { isFav ->
+                isFavourite = isFav
+            }
+        }
+    }
 
     val backgroundBrush = remember {
         Brush.verticalGradient(
@@ -49,6 +63,28 @@ fun HomeScreen(
             SmallTopAppBar(
                 title = { Text(currentWeather?.name ?: "Pogoda") },
                 actions = {
+                    // Przycisk do dodawania/usuwania z ulubionych
+                    if (currentWeather != null) {
+                        IconButton(
+                            onClick = {
+                                currentWeather.name.let { cityName ->
+                                    if (isFavourite) {
+                                        favouriteViewModel.removeFavourite(cityName)
+                                        isFavourite = false
+                                    } else {
+                                        favouriteViewModel.addFavourite(cityName)
+                                        isFavourite = true
+                                    }
+                                }
+                            }
+                        ) {
+                            Icon(
+                                imageVector = if (isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                contentDescription = if (isFavourite) "Usuń z ulubionych" else "Dodaj do ulubionych",
+                                tint = if (isFavourite) Color(0xFFFF4081) else Color.White
+                            )
+                        }
+                    }
                     IconButton(onClick = onNavigateToSearch) {
                         Icon(Icons.Default.Search, contentDescription = "Szukaj")
                     }
@@ -67,7 +103,8 @@ fun HomeScreen(
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
+                    modifier = Modifier.align(Alignment.Center),
+                    color = Color.White
                 )
             } else if (error != null) {
                 Text(

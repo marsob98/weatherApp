@@ -56,7 +56,8 @@ fun DailyForecastSection(forecast: ForecastResponse) {
                     day = formatDate(dayForecasts.first().dt),
                     maxTemp = maxTemp.toInt(),
                     minTemp = minTemp.toInt(),
-                    weatherDescription = weather.description
+                    weatherDescription = weather.description,
+                    iconCode = weather.icon
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -70,7 +71,8 @@ fun DailyForecastItem(
     day: String,
     maxTemp: Int,
     minTemp: Int,
-    weatherDescription: String
+    weatherDescription: String,
+    iconCode: String
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -81,16 +83,17 @@ fun DailyForecastItem(
             text = day,
             style = MaterialTheme.typography.bodyMedium,
             color = Color.White,
-            modifier = Modifier.width(80.dp)
+            modifier = Modifier.width(60.dp)
         )
 
-        // Tu powinna być ikona pogody
+        // Dodajemy ikonę pogody
+        WeatherIcon(iconCode = iconCode)
 
         Text(
             text = weatherDescription.capitalize(),
             style = MaterialTheme.typography.bodyMedium,
             color = Color.White,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f).padding(horizontal = 8.dp)
         )
 
         Text(

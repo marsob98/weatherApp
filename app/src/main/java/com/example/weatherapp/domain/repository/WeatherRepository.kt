@@ -2,6 +2,7 @@ package com.example.weatherapp.domain.repository
 
 import com.example.weatherapp.data.remote.api.WeatherApi
 import com.example.weatherapp.data.remote.model.ForecastResponse
+import com.example.weatherapp.data.remote.model.GeocodingResponse
 import com.example.weatherapp.data.remote.model.WeatherResponse
 import com.example.weatherapp.ui.utils.Constants
 
@@ -16,5 +17,10 @@ class WeatherRepository @Inject constructor(
 
     suspend fun getForecast(city: String): ForecastResponse {
         return weatherApi.getForecast(city, Constants.API_KEY)
+    }
+
+    // Nowa metoda do wyszukiwania miast
+    suspend fun searchCity(query: String): List<GeocodingResponse> {
+        return weatherApi.searchCity(query, 5, Constants.API_KEY)
     }
 }

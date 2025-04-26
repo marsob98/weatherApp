@@ -8,6 +8,7 @@ import com.example.weatherapp.data.local.database.WeatherDatabase
 import com.example.weatherapp.data.remote.api.GeocodingApi
 import com.example.weatherapp.data.remote.api.WeatherApi
 import com.example.weatherapp.ui.utils.Constants
+import com.example.weatherapp.utils.LocationManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -83,6 +84,12 @@ object AppModule {
     @Singleton
     fun provideFavouriteDao(database: WeatherDatabase): FavouriteDao {
         return database.favouriteDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideLocationManager(@ApplicationContext context: Context): LocationManager {
+        return LocationManager(context)
     }
 }
 

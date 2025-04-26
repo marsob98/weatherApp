@@ -17,8 +17,16 @@ class WeatherRepository @Inject constructor(
         return weatherApi.getCurrentWeather(city, Constants.API_KEY)
     }
 
+    suspend fun getCurrentWeatherByCoordinates(latitude: Double, longitude: Double): WeatherResponse {
+        return weatherApi.getCurrentWeatherByCoordinates(latitude, longitude, Constants.API_KEY)
+    }
+
     suspend fun getForecast(city: String): ForecastResponse {
         return weatherApi.getForecast(city, Constants.API_KEY)
+    }
+
+    suspend fun getForecastByCoordinates(latitude: Double, longitude: Double): ForecastResponse {
+        return weatherApi.getForecastByCoordinates(latitude, longitude, Constants.API_KEY)
     }
 
     // Metoda do wyszukiwania miast

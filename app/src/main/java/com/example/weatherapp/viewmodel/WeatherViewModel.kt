@@ -1,5 +1,6 @@
 package com.example.weatherapp.viewmodel
 
+import android.location.Location
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -9,15 +10,18 @@ import com.example.weatherapp.data.remote.model.GeocodingResponse
 import com.example.weatherapp.data.remote.model.WeatherResponse
 import com.example.weatherapp.domain.repository.WeatherRepository
 import com.example.weatherapp.ui.utils.Constants
+import com.example.weatherapp.utils.LocationManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
-    private val repository: WeatherRepository
+    private val repository: WeatherRepository,
+    private val locationManager: LocationManager
 ) : ViewModel() {
 
     private val _currentWeatherState = mutableStateOf<WeatherResponse?>(null)
@@ -38,8 +42,76 @@ class WeatherViewModel @Inject constructor(
     private val _isSearching = mutableStateOf(false)
     val isSearching: State<Boolean> = _isSearching
 
+    private val _locationPermissionGranted = mutableStateOf(false)
+    val locationPermissionGranted: State<Boolean> = _locationPermissionGranted
+
+    private val _currentLocation = mutableStateOf<Location?>(null)
+    val currentLocation: State<Location?> = _currentLocation
+
     init {
-        getWeatherForCity(Constants.DEFAULT_CITY)
+        checkLocationPermission()
+        if (locationManager.hasLocationPermission()) {
+            getWeatherForCurrentLocation()
+        } else {
+            getWeatherForCity(Constants.DEFAULT_CITY)
+        }
+
+        // Nasłuchuj aktualizacji lokalizacji
+        viewModelScope.launch {
+            locationManager.locationUpdates()
+                .catch { e ->
+                    _error.value = "Błąd lokalizacji: ${e.message}"
+                }
+                .collect { location ->
+                    _currentLocation.value = location
+                    getWeatherForLocation(location)
+                }
+        }
+    }
+
+    fun checkLocationPermission() {
+        _locationPermissionGranted.value = locationManager.hasLocationPermission()
+    }
+
+    fun getWeatherForCurrentLocation() {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                _error.value = null
+
+                val location = locationManager.getLastLocation()
+                if (location != null) {
+                    _currentLocation.value = location
+                    getWeatherForLocation(location)
+                } else {
+                    // Jeśli nie możemy uzyskać lokalizacji, użyj domyślnego miasta
+                    getWeatherForCity(Constants.DEFAULT_CITY)
+                }
+            } catch (e: Exception) {
+                _error.value = e.message
+                getWeatherForCity(Constants.DEFAULT_CITY)
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    private suspend fun getWeatherForLocation(location: Location) {
+        try {
+            val weatherResponse = repository.getCurrentWeatherByCoordinates(
+                location.latitude,
+                location.longitude
+            )
+            _currentWeatherState.value = weatherResponse
+
+            val forecastResponse = repository.getForecastByCoordinates(
+                location.latitude,
+                location.longitude
+            )
+            _forecastState.value = forecastResponse
+        } catch (e: Exception) {
+            _error.value = e.message
+        }
     }
 
     fun getWeatherForCity(city: String) {
@@ -62,7 +134,7 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
-    // Funkcja wyszukiwania miast - dodane logi dla debugowania
+    // Funkcja wyszukiwania miast
     fun searchCities(query: String) {
         if (query.length < 3) {
             _searchResults.value = emptyList()

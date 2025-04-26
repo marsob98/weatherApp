@@ -16,9 +16,27 @@ interface WeatherApi {
         @Query("lang") lang: String = "pl"
     ): WeatherResponse
 
+    @GET("weather")
+    suspend fun getCurrentWeatherByCoordinates(
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double,
+        @Query("appid") apiKey: String,
+        @Query("units") units: String = "metric",
+        @Query("lang") lang: String = "pl"
+    ): WeatherResponse
+
     @GET("forecast")
     suspend fun getForecast(
         @Query("q") cityName: String,
+        @Query("appid") apiKey: String,
+        @Query("units") units: String = "metric",
+        @Query("lang") lang: String = "pl"
+    ): ForecastResponse
+
+    @GET("forecast")
+    suspend fun getForecastByCoordinates(
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double,
         @Query("appid") apiKey: String,
         @Query("units") units: String = "metric",
         @Query("lang") lang: String = "pl"

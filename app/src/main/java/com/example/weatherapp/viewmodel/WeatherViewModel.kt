@@ -32,7 +32,6 @@ class WeatherViewModel @Inject constructor(
     private val _error = mutableStateOf<String?>(null)
     val error: State<String?> = _error
 
-    // Dodajemy nowy stan dla wyszukiwania miast
     private val _searchResults = MutableStateFlow<List<GeocodingResponse>>(emptyList())
     val searchResults: StateFlow<List<GeocodingResponse>> = _searchResults
 
@@ -63,7 +62,7 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
-    // Nowa funkcja do wyszukiwania miast
+    // Funkcja wyszukiwania miast - dodane logi dla debugowania
     fun searchCities(query: String) {
         if (query.length < 3) {
             _searchResults.value = emptyList()
@@ -73,10 +72,14 @@ class WeatherViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _isSearching.value = true
+                println("Wyszukiwanie miast dla zapytania: $query")
                 val results = repository.searchCity(query)
+                println("Otrzymano wyniki: ${results.size}")
                 _searchResults.value = results
             } catch (e: Exception) {
-                // Obsługa błędu (opcjonalnie wyświetlenie komunikatu)
+                println("Błąd podczas wyszukiwania: ${e.message}")
+                _error.value = e.message
+                _searchResults.value = emptyList()
             } finally {
                 _isSearching.value = false
             }

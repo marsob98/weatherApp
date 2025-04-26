@@ -33,6 +33,7 @@ fun SearchScreen(
     var searchQuery by remember { mutableStateOf(TextFieldValue()) }
     val searchResults by weatherViewModel.searchResults.collectAsStateWithLifecycle()
     val isSearching = weatherViewModel.isSearching.value
+    val error = weatherViewModel.error.value
 
     // Debounce do wyszukiwania
     val searchQueryFlow = remember { MutableStateFlow("") }
@@ -107,6 +108,18 @@ fun SearchScreen(
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                         color = Color.White
+                    )
+                } else if (error != null && searchQuery.text.length >= 3) {
+                    Text(
+                        text = "Błąd wyszukiwania: $error",
+                        color = Color.White,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                } else if (searchResults.isEmpty() && searchQuery.text.length >= 3) {
+                    Text(
+                        text = "Nie znaleziono miast dla zapytania: ${searchQuery.text}",
+                        color = Color.White,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
                 } else {
                     LazyColumn {

@@ -19,7 +19,7 @@ class WeatherRepository @Inject constructor(
         return weatherApi.getForecast(city, Constants.API_KEY)
     }
 
-    // Nowa metoda do wyszukiwania miast
+    // Metoda do wyszukiwania miast
     suspend fun searchCity(query: String): List<GeocodingResponse> {
         return weatherApi.searchCity(query, 5, Constants.API_KEY)
     }

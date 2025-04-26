@@ -23,7 +23,7 @@ interface WeatherApi {
         @Query("lang") lang: String = "pl"
     ): ForecastResponse
 
-    // Nowa metoda do wyszukiwania miast
+    // Poprawiony endpoint do API geocodingu
     @GET("geo/1.0/direct")
     suspend fun searchCity(
         @Query("q") query: String,

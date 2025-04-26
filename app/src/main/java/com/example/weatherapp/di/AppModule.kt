@@ -1,9 +1,11 @@
+// Plik: app/src/main/java/com/example/weatherapp/di/AppModule.kt
 package com.example.weatherapp.di
 
 import android.content.Context
 import androidx.room.Room
 import com.example.weatherapp.data.local.dao.FavouriteDao
 import com.example.weatherapp.data.local.database.WeatherDatabase
+import com.example.weatherapp.data.remote.api.GeocodingApi
 import com.example.weatherapp.data.remote.api.WeatherApi
 import com.example.weatherapp.ui.utils.Constants
 import dagger.Module
@@ -15,6 +17,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
@@ -34,7 +37,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    @WeatherRetrofit
+    fun provideWeatherRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .client(okHttpClient)
@@ -44,8 +48,25 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWeatherApi(retrofit: Retrofit): WeatherApi {
+    @GeocodingRetrofit
+    fun provideGeocodingRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(Constants.GEO_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWeatherApi(@WeatherRetrofit retrofit: Retrofit): WeatherApi {
         return retrofit.create(WeatherApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGeocodingApi(@GeocodingRetrofit retrofit: Retrofit): GeocodingApi {
+        return retrofit.create(GeocodingApi::class.java)
     }
 
     @Provides
@@ -64,3 +85,11 @@ object AppModule {
         return database.favouriteDao()
     }
 }
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class WeatherRetrofit
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class GeocodingRetrofit

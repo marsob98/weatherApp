@@ -1,3 +1,4 @@
+// Plik: app/src/main/java/com/example/weatherapp/ui/home/HomeScreen.kt
 package com.example.weatherapp.ui.home
 
 import androidx.compose.foundation.background
@@ -6,7 +7,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -37,18 +37,6 @@ fun HomeScreen(
     val isLoading = weatherViewModel.isLoading.value
     val error = weatherViewModel.error.value
 
-    // Sprawdzanie, czy aktualne miasto jest w ulubionych
-    var isFavourite by remember { mutableStateOf(false) }
-
-    // Aktualizacja statusu ulubionego przy zmianie aktualnego miasta
-    LaunchedEffect(currentWeather?.name) {
-        currentWeather?.name?.let { cityName ->
-            favouriteViewModel.isFavourite(cityName) { isFav ->
-                isFavourite = isFav
-            }
-        }
-    }
-
     val backgroundBrush = remember {
         Brush.verticalGradient(
             colors = listOf(
@@ -63,31 +51,14 @@ fun HomeScreen(
             SmallTopAppBar(
                 title = { Text(currentWeather?.name ?: "Pogoda") },
                 actions = {
-                    // Przycisk do dodawania/usuwania z ulubionych
-                    if (currentWeather != null) {
-                        IconButton(
-                            onClick = {
-                                currentWeather.name.let { cityName ->
-                                    if (isFavourite) {
-                                        favouriteViewModel.removeFavourite(cityName)
-                                        isFavourite = false
-                                    } else {
-                                        favouriteViewModel.addFavourite(cityName)
-                                        isFavourite = true
-                                    }
-                                }
-                            }
-                        ) {
-                            Icon(
-                                imageVector = if (isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                contentDescription = if (isFavourite) "Usuń z ulubionych" else "Dodaj do ulubionych",
-                                tint = if (isFavourite) Color(0xFFFF4081) else Color.White
-                            )
-                        }
-                    }
+                    // Usunięta ikona gwiazdki, zostawiamy tylko dwie akcje
+
+                    // Przycisk do wyszukiwania
                     IconButton(onClick = onNavigateToSearch) {
                         Icon(Icons.Default.Search, contentDescription = "Szukaj")
                     }
+
+                    // Przycisk do przejścia do ekranu ulubionych
                     IconButton(onClick = onNavigateToFavorites) {
                         Icon(Icons.Default.Favorite, contentDescription = "Ulubione")
                     }
@@ -123,7 +94,10 @@ fun HomeScreen(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    CurrentWeatherCard(currentWeather)
+                    CurrentWeatherCard(
+                        weather = currentWeather,
+                        favouriteViewModel = favouriteViewModel
+                    )
 
                     Spacer(modifier = Modifier.height(16.dp))
 

@@ -1,3 +1,4 @@
+// Plik: app/src/main/java/com/example/weatherapp/data/remote/api/WeatherApi.kt
 package com.example.weatherapp.data.remote.api
 
 import com.example.weatherapp.data.remote.model.ForecastResponse
@@ -22,12 +23,4 @@ interface WeatherApi {
         @Query("units") units: String = "metric",
         @Query("lang") lang: String = "pl"
     ): ForecastResponse
-
-    // Poprawiony endpoint do API geocodingu
-    @GET("geo/1.0/direct")
-    suspend fun searchCity(
-        @Query("q") query: String,
-        @Query("limit") limit: Int = 5,
-        @Query("appid") apiKey: String
-    ): List<GeocodingResponse>
 }

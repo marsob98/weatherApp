@@ -83,8 +83,13 @@ fun SearchScreen(
                         Icon(Icons.Default.Search, contentDescription = "Szukaj")
                     },
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        textColor = Color.White,
-                        placeholderColor = Color.White.copy(alpha = 0.5f),
+                        unfocusedTextColor = Color.White,
+                        focusedTextColor = Color.White,
+
+                        unfocusedPlaceholderColor = Color.White.copy(alpha = 0.5f),
+                        focusedPlaceholderColor = Color.White.copy(alpha = 0.5f),
+
+                        // Te parametry możesz zachować bez zmian
                         cursorColor = Color.White,
                         focusedBorderColor = Color.White,
                         unfocusedBorderColor = Color.White.copy(alpha = 0.5f)

@@ -1,4 +1,5 @@
 // Plik: app/src/main/java/com/example/weatherapp/ui/components/LocationPermission.kt
+
 package com.example.weatherapp.ui.components
 
 import androidx.compose.foundation.layout.*
@@ -21,7 +22,8 @@ fun LocationPermission(
     content: @Composable () -> Unit
 ) {
     val permissionsState = rememberMultiplePermissionsState(permissions) {
-        if (it.all { permission -> permission.value }) {
+        val allGranted = it.all { permission -> permission.value }
+        if (allGranted) {
             onPermissionGranted()
         }
     }

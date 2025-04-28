@@ -13,8 +13,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 @Singleton
 class LocationManager @Inject constructor(
@@ -46,8 +49,15 @@ class LocationManager @Inject constructor(
         if (!hasLocationPermission()) return null
 
         return try {
-            val locationTask = fusedLocationClient.lastLocation
-            locationTask.await()
+            suspendCancellableCoroutine { continuation ->
+                fusedLocationClient.lastLocation
+                    .addOnSuccessListener { location ->
+                        continuation.resume(location)
+                    }
+                    .addOnFailureListener { exception ->
+                        continuation.resumeWithException(exception)
+                    }
+            }
         } catch (e: Exception) {
             null
         }
@@ -81,14 +91,6 @@ class LocationManager @Inject constructor(
 
         awaitClose {
             fusedLocationClient.removeLocationUpdates(locationCallback)
-        }
-    }
-
-    private suspend fun <T> com.google.android.gms.tasks.Task<T>.await(): T? {
-        return try {
-            kotlinx.coroutines.tasks.await()
-        } catch (e: Exception) {
-            null
         }
     }
 }

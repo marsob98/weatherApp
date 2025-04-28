@@ -1,3 +1,5 @@
+// Plik: app/src/main/java/com/example/weatherapp/viewmodel/WeatherViewModel.kt
+
 package com.example.weatherapp.viewmodel
 
 import android.location.Location
@@ -48,6 +50,12 @@ class WeatherViewModel @Inject constructor(
     private val _currentLocation = mutableStateOf<Location?>(null)
     val currentLocation: State<Location?> = _currentLocation
 
+    private val _locationWeatherState = mutableStateOf<WeatherResponse?>(null)
+    val locationWeatherState: State<WeatherResponse?> = _locationWeatherState
+
+    private val _isLocationLoading = mutableStateOf(false)
+    val isLocationLoading: State<Boolean> = _isLocationLoading
+
     init {
         checkLocationPermission()
         if (locationManager.hasLocationPermission()) {
@@ -64,7 +72,7 @@ class WeatherViewModel @Inject constructor(
                 }
                 .collect { location ->
                     _currentLocation.value = location
-                    getWeatherForLocation(location)
+                    updateLocationWeather(location)
                 }
         }
     }
@@ -76,28 +84,56 @@ class WeatherViewModel @Inject constructor(
     fun getWeatherForCurrentLocation() {
         viewModelScope.launch {
             try {
-                _isLoading.value = true
+                _isLocationLoading.value = true
                 _error.value = null
 
                 val location = locationManager.getLastLocation()
                 if (location != null) {
                     _currentLocation.value = location
-                    getWeatherForLocation(location)
+
+                    // Pobieramy dane tylko dla głównego widoku, jeśli jeszcze nie mamy danych
+                    if (_currentWeatherState.value == null) {
+                        getWeatherForLocation(location)
+                    }
+
+                    // Zawsze aktualizujemy dane dla karty lokalizacji
+                    updateLocationWeather(location)
                 } else {
                     // Jeśli nie możemy uzyskać lokalizacji, użyj domyślnego miasta
-                    getWeatherForCity(Constants.DEFAULT_CITY)
+                    if (_currentWeatherState.value == null) {
+                        getWeatherForCity(Constants.DEFAULT_CITY)
+                    }
                 }
             } catch (e: Exception) {
                 _error.value = e.message
-                getWeatherForCity(Constants.DEFAULT_CITY)
+                if (_currentWeatherState.value == null) {
+                    getWeatherForCity(Constants.DEFAULT_CITY)
+                }
             } finally {
-                _isLoading.value = false
+                _isLocationLoading.value = false
             }
+        }
+    }
+
+    private suspend fun updateLocationWeather(location: Location) {
+        try {
+            _isLocationLoading.value = true
+            val weatherResponse = repository.getCurrentWeatherByCoordinates(
+                location.latitude,
+                location.longitude
+            )
+            _locationWeatherState.value = weatherResponse
+        } catch (e: Exception) {
+            // Błędy w aktualizacji karty lokalizacji nie powinny wpływać na główny widok
+            // więc nie ustawiamy _error.value
+        } finally {
+            _isLocationLoading.value = false
         }
     }
 
     private suspend fun getWeatherForLocation(location: Location) {
         try {
+            _isLoading.value = true
             val weatherResponse = repository.getCurrentWeatherByCoordinates(
                 location.latitude,
                 location.longitude
@@ -111,6 +147,8 @@ class WeatherViewModel @Inject constructor(
             _forecastState.value = forecastResponse
         } catch (e: Exception) {
             _error.value = e.message
+        } finally {
+            _isLoading.value = false
         }
     }
 

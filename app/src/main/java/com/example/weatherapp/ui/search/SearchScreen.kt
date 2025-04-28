@@ -31,7 +31,7 @@ fun SearchScreen(
     onNavigateBack: () -> Unit
 ) {
     var searchQuery by remember { mutableStateOf(TextFieldValue()) }
-    val searchResults by weatherViewModel.searchResults.collectAsStateWithLifecycle()
+    val searchResults by weatherViewModel.searchResults.collectAsState(initial = emptyList())
     val isSearching = weatherViewModel.isSearching.value
     val error = weatherViewModel.error.value
 

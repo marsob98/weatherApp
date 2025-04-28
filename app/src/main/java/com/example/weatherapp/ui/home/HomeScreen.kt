@@ -1,6 +1,8 @@
 // Plik: app/src/main/java/com/example/weatherapp/ui/home/HomeScreen.kt
+
 package com.example.weatherapp.ui.home
 
+import android.Manifest
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,10 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.weatherapp.ui.components.CurrentWeatherCard
-import com.example.weatherapp.ui.components.DailyForecastSection
-import com.example.weatherapp.ui.components.HourlyForecastSection
-import com.example.weatherapp.ui.components.WeatherDetailsCard
+import com.example.weatherapp.ui.components.*
 import com.example.weatherapp.viewmodel.FavouriteViewModel
 import com.example.weatherapp.viewmodel.WeatherViewModel
 
@@ -36,6 +35,10 @@ fun HomeScreen(
     val forecast = weatherViewModel.forecastState.value
     val isLoading = weatherViewModel.isLoading.value
     val error = weatherViewModel.error.value
+    val locationPermissionGranted = weatherViewModel.locationPermissionGranted.value
+    val locationWeather = weatherViewModel.locationWeatherState.value
+    val isLocationLoading = weatherViewModel.isLocationLoading.value
+    val favourites by favouriteViewModel.favourites.collectAsState(initial = emptyList())
 
     val backgroundBrush = remember {
         Brush.verticalGradient(
@@ -51,8 +54,6 @@ fun HomeScreen(
             SmallTopAppBar(
                 title = { Text(currentWeather?.name ?: "Pogoda") },
                 actions = {
-                    // Usunięta ikona gwiazdki, zostawiamy tylko dwie akcje
-
                     // Przycisk do wyszukiwania
                     IconButton(onClick = onNavigateToSearch) {
                         Icon(Icons.Default.Search, contentDescription = "Szukaj")
@@ -66,50 +67,72 @@ fun HomeScreen(
             )
         }
     ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(brush = backgroundBrush)
-                .padding(paddingValues)
+        LocationPermission(
+            permissions = listOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ),
+            onPermissionGranted = {
+                weatherViewModel.checkLocationPermission()
+                weatherViewModel.getWeatherForCurrentLocation()
+            }
         ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                    color = Color.White
-                )
-            } else if (error != null) {
-                Text(
-                    text = "Wystąpił błąd: $error",
-                    color = Color.White,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(16.dp),
-                    textAlign = TextAlign.Center
-                )
-            } else if (currentWeather != null && forecast != null) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    CurrentWeatherCard(
-                        weather = currentWeather,
-                        favouriteViewModel = favouriteViewModel
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(brush = backgroundBrush)
+                    .padding(paddingValues)
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center),
+                        color = Color.White
                     )
+                } else if (error != null) {
+                    Text(
+                        text = "Wystąpił błąd: $error",
+                        color = Color.White,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(16.dp),
+                        textAlign = TextAlign.Center
+                    )
+                } else if (currentWeather != null && forecast != null) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        // Karta pogody opartej na lokalizacji (jeśli mamy uprawnienia)
+                        if (locationPermissionGranted) {
+                            LocationWeatherCard(
+                                weather = locationWeather,
+                                isLoading = isLocationLoading,
+                                onRefreshLocation = { weatherViewModel.getWeatherForCurrentLocation() }
+                            )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
 
-                    HourlyForecastSection(forecast.list.take(24))
+                        CurrentWeatherCard(
+                            weather = currentWeather,
+                            favouriteViewModel = favouriteViewModel
+                        )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                    DailyForecastSection(forecast)
+                        HourlyForecastSection(forecast.list.take(24))
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                    WeatherDetailsCard(currentWeather)
+                        DailyForecastSection(forecast)
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        WeatherDetailsCard(currentWeather)
+                    }
                 }
             }
         }

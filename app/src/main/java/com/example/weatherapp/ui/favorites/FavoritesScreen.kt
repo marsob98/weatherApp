@@ -29,7 +29,7 @@ fun FavoritesScreen(
     onNavigateBack: () -> Unit,
     favouriteViewModel: FavouriteViewModel = hiltViewModel()
 ) {
-    val favourites by favouriteViewModel.favourites.collectAsStateWithLifecycle()
+    val favourites by favouriteViewModel.favourites.collectAsState(initial = emptyList())
 
     val backgroundBrush = remember {
         Brush.verticalGradient(

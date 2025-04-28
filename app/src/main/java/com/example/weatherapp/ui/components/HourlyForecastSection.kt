@@ -4,14 +4,11 @@ package com.example.weatherapp.ui.components
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.weatherapp.data.remote.model.ForecastItem
@@ -22,22 +19,15 @@ import com.example.weatherapp.ui.utils.formatDateTime
 fun HourlyForecastSection(forecast: List<ForecastItem>) {
     val weatherColors = LocalWeatherColors.current
 
-    Card(
+    GlassmorphicCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .shadow(
-                elevation = 8.dp,
-                shape = RoundedCornerShape(24.dp),
-                spotColor = weatherColors.cardBackground.copy(alpha = 0.1f)
-            ),
-        shape = RoundedCornerShape(24.dp),
+            .padding(16.dp),
         backgroundColor = weatherColors.cardBackground,
-        elevation = 0.dp
+        borderColor = weatherColors.textPrimary.copy(alpha = 0.1f)
     ) {
         Column(
             modifier = Modifier
-                .padding(24.dp)
                 .fillMaxWidth()
         ) {
             Text(
@@ -76,15 +66,15 @@ fun HourlyForecastItem(forecastItem: ForecastItem) {
             color = weatherColors.textSecondary
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
-        // Dodajemy ikonę pogody
+        // Dodajemy animowaną ikonę pogody
         WeatherIcon(
             iconCode = forecastItem.weather.firstOrNull()?.icon ?: "",
             modifier = Modifier.size(40.dp)
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = "${forecastItem.main.temp.toInt()}°",

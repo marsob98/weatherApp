@@ -3,11 +3,7 @@ package com.example.weatherapp.ui.components
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.*
@@ -15,7 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.weatherapp.data.remote.model.WeatherResponse
@@ -50,22 +45,15 @@ fun LocationWeatherCard(
         }
     }
 
-    Card(
+    GlassmorphicCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .shadow(
-                elevation = 8.dp,
-                shape = RoundedCornerShape(24.dp),
-                spotColor = weatherColors.cardBackground.copy(alpha = 0.1f)
-            ),
-        shape = RoundedCornerShape(24.dp),
+            .padding(16.dp),
         backgroundColor = weatherColors.cardBackground,
-        elevation = 0.dp
+        borderColor = weatherColors.textPrimary.copy(alpha = 0.1f)
     ) {
         Column(
             modifier = Modifier
-                .padding(24.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -117,12 +105,24 @@ fun LocationWeatherCard(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Text(
-                        text = "${weather.main.temp.toInt()}°",
-                        style = MaterialTheme.typography.displayMedium,
-                        color = weatherColors.textPrimary,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        WeatherIcon(
+                            iconCode = weather.weather.firstOrNull()?.icon ?: "",
+                            modifier = Modifier.size(50.dp)
+                        )
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        Text(
+                            text = "${weather.main.temp.toInt()}°",
+                            style = MaterialTheme.typography.displayMedium,
+                            color = weatherColors.textPrimary,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
 
                     Text(
                         text = weather.weather.firstOrNull()?.description?.capitalize() ?: "",
@@ -139,38 +139,4 @@ fun LocationWeatherCard(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
                                 text = "Wilgotność",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = weatherColors.textSecondary
-                            )
-                            Text(
-                                text = "${weather.main.humidity}%",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = weatherColors.textPrimary
-                            )
-                        }
-
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = "Wiatr",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = weatherColors.textSecondary
-                            )
-                            Text(
-                                text = "${weather.wind.speed} m/s",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = weatherColors.textPrimary
-                            )
-                        }
-                    }
-                }
-            } else {
-                Text(
-                    text = "Nie udało się pobrać danych pogodowych dla Twojej lokalizacji",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = weatherColors.textPrimary,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-        }
-    }
-}
+                                style =

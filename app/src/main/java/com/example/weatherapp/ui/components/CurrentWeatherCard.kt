@@ -2,10 +2,8 @@
 package com.example.weatherapp.ui.components
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -16,12 +14,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.weatherapp.data.remote.model.WeatherResponse
 import com.example.weatherapp.ui.theme.LocalWeatherColors
@@ -50,22 +44,16 @@ fun CurrentWeatherCard(
         }
     }
 
-    Card(
+    // Używamy nowego komponentu GlassmorphicCard zamiast standardowej Card
+    GlassmorphicCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .shadow(
-                elevation = 8.dp,
-                shape = RoundedCornerShape(24.dp),
-                spotColor = Color.Black.copy(alpha = 0.2f)
-            ),
-        shape = RoundedCornerShape(24.dp),
+            .padding(16.dp),
         backgroundColor = weatherColors.cardBackground,
-        elevation = 0.dp
+        borderColor = weatherColors.textPrimary.copy(alpha = 0.1f)
     ) {
         Column(
             modifier = Modifier
-                .padding(24.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -93,12 +81,29 @@ fun CurrentWeatherCard(
                 }
             }
 
-            Text(
-                text = "${weather.main.temp.toInt()}°",
-                style = MaterialTheme.typography.displayLarge,
-                color = weatherColors.textPrimary,
-                fontWeight = FontWeight.Bold
-            )
+            // Główne informacje o temperaturze
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Dodajemy ikonę pogody obok temperatury
+                WeatherIcon(
+                    iconCode = weather.weather.firstOrNull()?.icon ?: "",
+                    modifier = Modifier.size(60.dp)
+                )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Text(
+                    text = "${weather.main.temp.toInt()}°",
+                    style = MaterialTheme.typography.displayLarge,
+                    color = weatherColors.textPrimary,
+                    fontWeight = FontWeight.Bold
+                )
+            }
 
             Text(
                 text = weather.weather.firstOrNull()?.description?.capitalize() ?: "",
@@ -106,7 +111,7 @@ fun CurrentWeatherCard(
                 color = weatherColors.textPrimary
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -139,7 +144,7 @@ fun CurrentWeatherCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Text(
                 text = "Wschód: ${formatTimestamp(weather.sys.sunrise)} • Zachód: ${formatTimestamp(weather.sys.sunset)}",

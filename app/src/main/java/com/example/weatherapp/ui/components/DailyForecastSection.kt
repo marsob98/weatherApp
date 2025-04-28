@@ -1,16 +1,16 @@
+// app/src/main/java/com/example/weatherapp/ui/components/DailyForecastSection.kt
 package com.example.weatherapp.ui.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.weatherapp.data.remote.model.ForecastResponse
+import com.example.weatherapp.ui.theme.LocalWeatherColors
 import com.example.weatherapp.ui.utils.formatDate
 import java.util.*
 
@@ -24,26 +24,27 @@ fun DailyForecastSection(forecast: ForecastResponse) {
         cal.get(Calendar.DAY_OF_YEAR)
     }.values.take(7) // Bierzemy tylko 7 dni
 
-    Card(
+    val weatherColors = LocalWeatherColors.current
+
+    GlassmorphicCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
-        shape = RoundedCornerShape(16.dp),
-        backgroundColor = Color(0xFF3A3E59).copy(alpha = 0.7f),
-        elevation = 4.dp
+            .padding(16.dp),
+        backgroundColor = weatherColors.cardBackground,
+        borderColor = weatherColors.textPrimary.copy(alpha = 0.1f)
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
                 .fillMaxWidth()
         ) {
             Text(
                 text = "Prognoza tygodniowa",
-                fontSize = 18.sp,
-                color = Color.White
+                style = MaterialTheme.typography.titleLarge,
+                color = weatherColors.textPrimary,
+                fontWeight = FontWeight.SemiBold
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             dailyForecast.forEach { dayForecasts ->
                 val maxTemp = dayForecasts.maxOf { it.main.temp }
@@ -58,7 +59,7 @@ fun DailyForecastSection(forecast: ForecastResponse) {
                     iconCode = weather.icon
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(12.dp))
             }
         }
     }
@@ -72,6 +73,8 @@ fun DailyForecastItem(
     weatherDescription: String,
     iconCode: String
 ) {
+    val weatherColors = LocalWeatherColors.current
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -79,25 +82,27 @@ fun DailyForecastItem(
     ) {
         Text(
             text = day,
-            fontSize = 16.sp,
-            color = Color.White,
+            style = MaterialTheme.typography.bodyLarge,
+            color = weatherColors.textPrimary,
             modifier = Modifier.width(60.dp)
         )
 
-        // Dodajemy ikonę pogody
+        // Dodajemy animowaną ikonę pogody
         WeatherIcon(iconCode = iconCode)
 
         Text(
             text = weatherDescription.capitalize(),
-            fontSize = 16.sp,
-            color = Color.White,
-            modifier = Modifier.weight(1f).padding(horizontal = 8.dp)
+            style = MaterialTheme.typography.bodyMedium,
+            color = weatherColors.textPrimary,
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 8.dp)
         )
 
         Text(
             text = "$minTemp° - $maxTemp°",
-            fontSize = 16.sp,
-            color = Color.White,
+            style = MaterialTheme.typography.bodyLarge,
+            color = weatherColors.textPrimary,
             modifier = Modifier.width(80.dp)
         )
     }

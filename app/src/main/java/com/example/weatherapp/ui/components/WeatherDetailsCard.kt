@@ -1,40 +1,40 @@
+// app/src/main/java/com/example/weatherapp/ui/components/WeatherDetailsCard.kt
 package com.example.weatherapp.ui.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.weatherapp.data.remote.model.WeatherResponse
+import com.example.weatherapp.ui.theme.LocalWeatherColors
 
 @Composable
 fun WeatherDetailsCard(weather: WeatherResponse) {
-    Card(
+    val weatherColors = LocalWeatherColors.current
+
+    GlassmorphicCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
-        shape = RoundedCornerShape(16.dp),
-        backgroundColor = Color(0xFF3A3E59).copy(alpha = 0.7f),
-        elevation = 4.dp
+            .padding(16.dp),
+        backgroundColor = weatherColors.cardBackground,
+        borderColor = weatherColors.textPrimary.copy(alpha = 0.1f)
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
                 .fillMaxWidth()
         ) {
             Text(
                 text = "Szczegóły",
-                fontSize = 18.sp,
-                color = Color.White
+                style = MaterialTheme.typography.titleLarge,
+                color = weatherColors.textPrimary,
+                fontWeight = FontWeight.SemiBold
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -51,7 +51,7 @@ fun WeatherDetailsCard(weather: WeatherResponse) {
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -73,19 +73,23 @@ fun WeatherDetailsCard(weather: WeatherResponse) {
 
 @Composable
 fun DetailItem(label: String, value: String) {
+    val weatherColors = LocalWeatherColors.current
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = label,
-            fontSize = 14.sp,
-            color = Color.White.copy(alpha = 0.7f)
+            style = MaterialTheme.typography.bodySmall,
+            color = weatherColors.textSecondary
         )
+
+        Spacer(modifier = Modifier.height(4.dp))
 
         Text(
             text = value,
-            fontSize = 16.sp,
-            color = Color.White,
+            style = MaterialTheme.typography.bodyLarge,
+            color = weatherColors.textPrimary,
             fontWeight = FontWeight.Medium
         )
     }

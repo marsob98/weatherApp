@@ -1,14 +1,19 @@
+// app/src/main/java/com/example/weatherapp/ui/components/WeatherIcon.kt
 package com.example.weatherapp.ui.components
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -16,36 +21,102 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun WeatherIcon(iconCode: String, modifier: Modifier = Modifier, tint: Color = Color.White) {
-    // Zamiast używać ikon, użyjmy prostego tekstu w kolorowym kółku
-    val (symbol, backgroundColor) = when {
+    // Efekt animacji
+    val infiniteTransition = rememberInfiniteTransition()
+
+    // Subtelna animacja dla słońca (pulsowanie)
+    val sunScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.2f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    // Subtelna animacja dla chmur (ruch)
+    val cloudTranslation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 5f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(3000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    // Animacja dla deszczu (spadanie)
+    val rainRotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 10f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    // Wybieranie ikony i koloru tła w zależności od kodu pogodowego
+    val (symbol, backgroundColor, animModifier) = when {
         // Słońce
-        iconCode.contains("01") -> "☀️" to Color(0xFFFFA000)
+        iconCode.contains("01") -> Triple(
+            "☀️",
+            Color(0xFFFFA000),
+            Modifier.scale(if (iconCode.contains("d")) sunScale else 1f)
+        )
         // Częściowe zachmurzenie
-        iconCode.contains("02") || iconCode.contains("03") -> "⛅" to Color(0xFF78909C)
+        iconCode.contains("02") || iconCode.contains("03") -> Triple(
+            "⛅",
+            Color(0xFF78909C),
+            Modifier.rotate(cloudTranslation)
+        )
         // Zachmurzenie
-        iconCode.contains("04") -> "☁️" to Color(0xFF546E7A)
+        iconCode.contains("04") -> Triple(
+            "☁️",
+            Color(0xFF546E7A),
+            Modifier.rotate(cloudTranslation)
+        )
         // Deszcz
-        iconCode.contains("09") || iconCode.contains("10") -> "🌧️" to Color(0xFF42A5F5)
+        iconCode.contains("09") || iconCode.contains("10") -> Triple(
+            "🌧️",
+            Color(0xFF42A5F5),
+            Modifier.rotate(rainRotation)
+        )
         // Burza
-        iconCode.contains("11") -> "⚡" to Color(0xFF5C6BC0)
+        iconCode.contains("11") -> Triple(
+            "⚡",
+            Color(0xFF5C6BC0),
+            Modifier.scale(sunScale)
+        )
         // Śnieg
-        iconCode.contains("13") -> "❄️" to Color(0xFFB3E5FC)
+        iconCode.contains("13") -> Triple(
+            "❄️",
+            Color(0xFFB3E5FC),
+            Modifier.rotate(rainRotation)
+        )
         // Mgła
-        iconCode.contains("50") -> "🌫️" to Color(0xFF90A4AE)
+        iconCode.contains("50") -> Triple(
+            "🌫️",
+            Color(0xFF90A4AE),
+            Modifier.scale(1f)
+        )
         // Domyślnie
-        else -> "🌤️" to Color(0xFF8D6E63)
+        else -> Triple(
+            "🌤️",
+            Color(0xFF8D6E63),
+            Modifier.scale(1f)
+        )
     }
 
     Box(
         modifier = modifier
-            .size(36.dp)
+            .size(40.dp)
             .clip(CircleShape)
-            .background(backgroundColor.copy(alpha = 0.7f)),
+            .background(backgroundColor.copy(alpha = 0.7f))
+            .then(animModifier),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = symbol,
-            fontSize = 16.sp,
+            fontSize = 18.sp,
             color = tint,
             textAlign = TextAlign.Center
         )

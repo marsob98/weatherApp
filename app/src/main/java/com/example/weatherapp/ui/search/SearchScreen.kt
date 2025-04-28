@@ -1,3 +1,5 @@
+// Plik: app/src/main/java/com/example/weatherapp/ui/search/SearchScreen.kt
+
 package com.example.weatherapp.ui.search
 
 import androidx.compose.foundation.background
@@ -9,6 +11,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.Card
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,11 +22,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.collectAsState
 import com.example.weatherapp.data.remote.model.GeocodingResponse
 import com.example.weatherapp.viewmodel.WeatherViewModel
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 
 @OptIn(ExperimentalMaterial3Api::class, FlowPreview::class)
@@ -80,6 +84,7 @@ fun SearchScreen(
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
+                // Uproszczona wersja OutlinedTextField bez problematycznych właściwości
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = {
@@ -87,18 +92,25 @@ fun SearchScreen(
                         searchQueryFlow.value = it.text
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("Wpisz nazwę miasta...") },
+                    placeholder = {
+                        Text(
+                            "Wpisz nazwę miasta...",
+                            color = Color.White.copy(alpha = 0.5f)
+                        )
+                    },
                     leadingIcon = {
-                        Icon(Icons.Default.Search, contentDescription = "Szukaj")
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = "Szukaj",
+                            tint = Color.White
+                        )
                     },
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        unfocusedTextColor = Color.White,
-                        focusedTextColor = Color.White,
-                        unfocusedPlaceholderColor = Color.White.copy(alpha = 0.5f),
-                        focusedPlaceholderColor = Color.White.copy(alpha = 0.5f),
+                        textColor = Color.White,
                         cursorColor = Color.White,
                         focusedBorderColor = Color.White,
-                        unfocusedBorderColor = Color.White.copy(alpha = 0.5f)
+                        unfocusedBorderColor = Color.White.copy(alpha = 0.5f),
+                        backgroundColor = Color.Transparent
                     )
                 )
 
@@ -150,9 +162,8 @@ fun CitySearchResult(
             .padding(vertical = 4.dp)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF3A3E59).copy(alpha = 0.7f)
-        )
+        backgroundColor = Color(0xFF3A3E59).copy(alpha = 0.7f),
+        elevation = 4.dp
     ) {
         Row(
             modifier = Modifier

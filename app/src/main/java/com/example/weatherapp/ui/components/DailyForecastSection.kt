@@ -2,15 +2,14 @@ package com.example.weatherapp.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.Card
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.weatherapp.data.remote.model.ForecastResponse
 import com.example.weatherapp.ui.utils.formatDate
 import java.util.*
@@ -30,9 +29,8 @@ fun DailyForecastSection(forecast: ForecastResponse) {
             .fillMaxWidth()
             .padding(8.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF3A3E59).copy(alpha = 0.7f)
-        )
+        backgroundColor = Color(0xFF3A3E59).copy(alpha = 0.7f),
+        elevation = 4.dp
     ) {
         Column(
             modifier = Modifier
@@ -41,7 +39,7 @@ fun DailyForecastSection(forecast: ForecastResponse) {
         ) {
             Text(
                 text = "Prognoza tygodniowa",
-                style = MaterialTheme.typography.titleMedium,
+                fontSize = 18.sp,
                 color = Color.White
             )
 
@@ -81,7 +79,7 @@ fun DailyForecastItem(
     ) {
         Text(
             text = day,
-            style = MaterialTheme.typography.bodyMedium,
+            fontSize = 16.sp,
             color = Color.White,
             modifier = Modifier.width(60.dp)
         )
@@ -91,14 +89,14 @@ fun DailyForecastItem(
 
         Text(
             text = weatherDescription.capitalize(),
-            style = MaterialTheme.typography.bodyMedium,
+            fontSize = 16.sp,
             color = Color.White,
             modifier = Modifier.weight(1f).padding(horizontal = 8.dp)
         )
 
         Text(
             text = "$minTemp° - $maxTemp°",
-            style = MaterialTheme.typography.bodyMedium,
+            fontSize = 16.sp,
             color = Color.White,
             modifier = Modifier.width(80.dp)
         )

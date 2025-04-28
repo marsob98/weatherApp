@@ -9,6 +9,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+// Importujemy Card z biblioteki Material
+import androidx.compose.material.Card
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,7 +19,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.collectAsState
 import com.example.weatherapp.data.local.entity.FavouriteEntity
 import com.example.weatherapp.viewmodel.FavouriteViewModel
 import com.example.weatherapp.viewmodel.WeatherViewModel
@@ -97,15 +99,15 @@ fun FavouriteItem(
     onItemClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
+    // Używamy Card z biblioteki Material
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
             .clickable(onClick = onItemClick),
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF3A3E59).copy(alpha = 0.7f)
-        )
+        backgroundColor = Color(0xFF3A3E59).copy(alpha = 0.7f),
+        elevation = 4.dp
     ) {
         Row(
             modifier = Modifier

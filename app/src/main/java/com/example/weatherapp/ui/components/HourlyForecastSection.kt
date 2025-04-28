@@ -4,15 +4,14 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.Card
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.weatherapp.data.remote.model.ForecastItem
 import com.example.weatherapp.ui.utils.formatDateTime
 
@@ -23,9 +22,8 @@ fun HourlyForecastSection(forecast: List<ForecastItem>) {
             .fillMaxWidth()
             .padding(8.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF3A3E59).copy(alpha = 0.7f)
-        )
+        backgroundColor = Color(0xFF3A3E59).copy(alpha = 0.7f),
+        elevation = 4.dp
     ) {
         Column(
             modifier = Modifier
@@ -34,7 +32,7 @@ fun HourlyForecastSection(forecast: List<ForecastItem>) {
         ) {
             Text(
                 text = "Prognoza godzinowa",
-                style = MaterialTheme.typography.titleMedium,
+                fontSize = 18.sp,
                 color = Color.White
             )
 
@@ -61,7 +59,7 @@ fun HourlyForecastItem(forecastItem: ForecastItem) {
     ) {
         Text(
             text = formatDateTime(forecastItem.dt),
-            style = MaterialTheme.typography.bodySmall,
+            fontSize = 14.sp,
             color = Color.White
         )
 
@@ -77,7 +75,7 @@ fun HourlyForecastItem(forecastItem: ForecastItem) {
 
         Text(
             text = "${forecastItem.main.temp.toInt()}°",
-            style = MaterialTheme.typography.bodyMedium,
+            fontSize = 16.sp,
             color = Color.White
         )
     }

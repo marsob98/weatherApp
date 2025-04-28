@@ -1,12 +1,15 @@
-// Plik: app/src/main/java/com/example/weatherapp/ui/components/CurrentWeatherCard.kt (cały plik)
+// Plik: app/src/main/java/com/example/weatherapp/ui/components/CurrentWeatherCard.kt
 package com.example.weatherapp.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,9 +41,8 @@ fun CurrentWeatherCard(
             .fillMaxWidth()
             .padding(8.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF3A3E59).copy(alpha = 0.7f)
-        )
+        backgroundColor = Color(0xFF3A3E59).copy(alpha = 0.7f),
+        elevation = 4.dp
     ) {
         Column(
             modifier = Modifier
@@ -81,7 +83,7 @@ fun CurrentWeatherCard(
 
             Text(
                 text = weather.weather.firstOrNull()?.description?.capitalize() ?: "",
-                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 18.sp,
                 color = Color.White
             )
 
@@ -94,12 +96,12 @@ fun CurrentWeatherCard(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = "Odczuwalna",
-                        style = MaterialTheme.typography.bodySmall,
+                        fontSize = 14.sp,
                         color = Color.White.copy(alpha = 0.7f)
                     )
                     Text(
                         text = "${weather.main.feelsLike.toInt()}°",
-                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 16.sp,
                         color = Color.White
                     )
                 }
@@ -107,12 +109,12 @@ fun CurrentWeatherCard(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = "Min/Max",
-                        style = MaterialTheme.typography.bodySmall,
+                        fontSize = 14.sp,
                         color = Color.White.copy(alpha = 0.7f)
                     )
                     Text(
                         text = "${weather.main.tempMin.toInt()}°/${weather.main.tempMax.toInt()}°",
-                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 16.sp,
                         color = Color.White
                     )
                 }
@@ -122,14 +124,9 @@ fun CurrentWeatherCard(
 
             Text(
                 text = "Wschód: ${formatTimestamp(weather.sys.sunrise)} • Zachód: ${formatTimestamp(weather.sys.sunset)}",
-                style = MaterialTheme.typography.bodySmall,
+                fontSize = 14.sp,
                 color = Color.White.copy(alpha = 0.7f)
             )
         }
     }
-}
-
-// Funkcja pomocnicza do kapitalizacji pierwszej litery
-fun String.capitalize(): String {
-    return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 }

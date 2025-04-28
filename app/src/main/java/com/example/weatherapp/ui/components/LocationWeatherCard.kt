@@ -1,23 +1,25 @@
-// Plik: app/src/main/java/com/example/weatherapp/ui/components/LocationWeatherCard.kt
-
+// app/src/main/java/com/example/weatherapp/ui/components/LocationWeatherCard.kt
 package com.example.weatherapp.ui.components
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-// Importujemy Card z biblioteki Material
 import androidx.compose.material.Card
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.rounded.LocationOn
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.weatherapp.data.remote.model.WeatherResponse
+import com.example.weatherapp.ui.theme.LocalWeatherColors
 
 @Composable
 fun LocationWeatherCard(
@@ -25,17 +27,45 @@ fun LocationWeatherCard(
     isLoading: Boolean,
     onRefreshLocation: () -> Unit
 ) {
+    val weatherColors = LocalWeatherColors.current
+
+    // Animacja dla przycisku odświeżania
+    var isRefreshing by remember { mutableStateOf(false) }
+    val rotationState = remember { Animatable(0f) }
+
+    LaunchedEffect(isLoading) {
+        isRefreshing = isLoading
+        if (isLoading) {
+            // Rozpocznij obracanie
+            rotationState.animateTo(
+                targetValue = rotationState.value + 360f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(1000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Restart
+                )
+            )
+        } else {
+            // Zatrzymaj animację
+            rotationState.stop()
+        }
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
-        shape = RoundedCornerShape(16.dp),
-        backgroundColor = Color(0xFF3A3E59).copy(alpha = 0.7f),
-        elevation = 4.dp
+            .padding(16.dp)
+            .shadow(
+                elevation = 8.dp,
+                shape = RoundedCornerShape(24.dp),
+                spotColor = weatherColors.cardBackground.copy(alpha = 0.1f)
+            ),
+        shape = RoundedCornerShape(24.dp),
+        backgroundColor = weatherColors.cardBackground,
+        elevation = 0.dp
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(24.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -46,32 +76,33 @@ fun LocationWeatherCard(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        imageVector = Icons.Default.LocationOn,
+                        imageVector = Icons.Rounded.LocationOn,
                         contentDescription = "Lokalizacja",
-                        tint = Color.White
+                        tint = weatherColors.textPrimary
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Twoja lokalizacja",
                         style = MaterialTheme.typography.titleMedium,
-                        color = Color.White
+                        color = weatherColors.textPrimary
                     )
                 }
 
                 IconButton(onClick = onRefreshLocation) {
                     Icon(
-                        imageVector = Icons.Default.Refresh,
+                        imageVector = Icons.Rounded.Refresh,
                         contentDescription = "Odśwież lokalizację",
-                        tint = Color.White
+                        tint = weatherColors.textPrimary,
+                        modifier = Modifier.rotate(rotationState.value)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             if (isLoading) {
                 CircularProgressIndicator(
-                    color = Color.White,
+                    color = weatherColors.textPrimary,
                     modifier = Modifier.padding(16.dp)
                 )
             } else if (weather != null) {
@@ -80,26 +111,26 @@ fun LocationWeatherCard(
                 ) {
                     Text(
                         text = weather.name,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Color.White.copy(alpha = 0.8f)
+                        style = MaterialTheme.typography.titleLarge,
+                        color = weatherColors.textPrimary
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
                         text = "${weather.main.temp.toInt()}°",
-                        fontSize = 48.sp,
-                        color = Color.White,
+                        style = MaterialTheme.typography.displayMedium,
+                        color = weatherColors.textPrimary,
                         fontWeight = FontWeight.Bold
                     )
 
                     Text(
                         text = weather.weather.firstOrNull()?.description?.capitalize() ?: "",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Color.White
+                        style = MaterialTheme.typography.titleMedium,
+                        color = weatherColors.textPrimary
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -109,12 +140,12 @@ fun LocationWeatherCard(
                             Text(
                                 text = "Wilgotność",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.7f)
+                                color = weatherColors.textSecondary
                             )
                             Text(
                                 text = "${weather.main.humidity}%",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color.White
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = weatherColors.textPrimary
                             )
                         }
 
@@ -122,12 +153,12 @@ fun LocationWeatherCard(
                             Text(
                                 text = "Wiatr",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.7f)
+                                color = weatherColors.textSecondary
                             )
                             Text(
                                 text = "${weather.wind.speed} m/s",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color.White
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = weatherColors.textPrimary
                             )
                         }
                     }
@@ -136,8 +167,8 @@ fun LocationWeatherCard(
                 Text(
                     text = "Nie udało się pobrać danych pogodowych dla Twojej lokalizacji",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    color = weatherColors.textPrimary,
+                    modifier = Modifier.padding(16.dp)
                 )
             }
         }

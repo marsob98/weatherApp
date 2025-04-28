@@ -110,7 +110,7 @@ fun HomeScreen(
                             LocationWeatherCard(
                                 weather = locationWeather,
                                 isLoading = isLocationLoading,
-                                onRefreshLocation = { weatherViewModel.getWeatherForCurrentLocation() }
+                                onRefreshLocation = { weatherViewModel.getWeatherForCurrentLocation(true) }
                             )
 
                             Spacer(modifier = Modifier.height(16.dp))

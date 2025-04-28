@@ -59,7 +59,7 @@ class WeatherViewModel @Inject constructor(
     init {
         checkLocationPermission()
         if (locationManager.hasLocationPermission()) {
-            getWeatherForCurrentLocation()
+            getWeatherForCurrentLocation(true) // Dodajemy parametr true, aby ustawić lokalizację jako główną
         } else {
             getWeatherForCity(Constants.DEFAULT_CITY)
         }
@@ -72,6 +72,7 @@ class WeatherViewModel @Inject constructor(
                 }
                 .collect { location ->
                     _currentLocation.value = location
+                    // Aktualizuje tylko dane karty lokalizacji, nie głównego widoku
                     updateLocationWeather(location)
                 }
         }
@@ -81,7 +82,8 @@ class WeatherViewModel @Inject constructor(
         _locationPermissionGranted.value = locationManager.hasLocationPermission()
     }
 
-    fun getWeatherForCurrentLocation() {
+    // Dodajemy nowy parametr, który określa czy ustawić tę lokalizację jako główną
+    fun getWeatherForCurrentLocation(setAsMain: Boolean = false) {
         viewModelScope.launch {
             try {
                 _isLocationLoading.value = true
@@ -91,13 +93,13 @@ class WeatherViewModel @Inject constructor(
                 if (location != null) {
                     _currentLocation.value = location
 
-                    // Pobieramy dane tylko dla głównego widoku, jeśli jeszcze nie mamy danych
-                    if (_currentWeatherState.value == null) {
-                        getWeatherForLocation(location)
+                    // Jeśli setAsMain jest true, pobieramy dane dla głównego widoku
+                    if (setAsMain) {
+                        getWeatherForLocation(location, true)
+                    } else {
+                        // Zawsze aktualizujemy dane dla karty lokalizacji
+                        updateLocationWeather(location)
                     }
-
-                    // Zawsze aktualizujemy dane dla karty lokalizacji
-                    updateLocationWeather(location)
                 } else {
                     // Jeśli nie możemy uzyskać lokalizacji, użyj domyślnego miasta
                     if (_currentWeatherState.value == null) {
@@ -131,20 +133,32 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getWeatherForLocation(location: Location) {
+    // Dodajemy parametr setAsMain, który określa czy ustawić tę lokalizację jako główną
+    private suspend fun getWeatherForLocation(location: Location, setAsMain: Boolean = false) {
         try {
             _isLoading.value = true
             val weatherResponse = repository.getCurrentWeatherByCoordinates(
                 location.latitude,
                 location.longitude
             )
-            _currentWeatherState.value = weatherResponse
+
+            // Jeśli setAsMain jest true, ustawiamy dane jako główne
+            if (setAsMain) {
+                _currentWeatherState.value = weatherResponse
+            }
+
+            _locationWeatherState.value = weatherResponse
 
             val forecastResponse = repository.getForecastByCoordinates(
                 location.latitude,
                 location.longitude
             )
-            _forecastState.value = forecastResponse
+
+            // Jeśli setAsMain jest true, ustawiamy również prognozę jako główną
+            if (setAsMain) {
+                _forecastState.value = forecastResponse
+            }
+
         } catch (e: Exception) {
             _error.value = e.message
         } finally {

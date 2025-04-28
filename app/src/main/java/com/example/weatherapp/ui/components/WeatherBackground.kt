@@ -1,3 +1,4 @@
+// app/src/main/java/com/example/weatherapp/ui/components/WeatherBackground.kt
 package com.example.weatherapp.ui.components
 
 import androidx.compose.foundation.background
@@ -9,56 +10,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import com.example.weatherapp.data.remote.model.Weather
+import com.example.weatherapp.ui.theme.LocalWeatherColors
+import java.time.LocalTime
 
 @Composable
 fun WeatherBackground(
     weather: Weather?,
     content: @Composable () -> Unit
 ) {
-    val backgroundBrush = remember(weather) {
-        when (weather?.main?.lowercase()) {
-            "clear" -> Brush.verticalGradient(
-                colors = listOf(
-                    Color(0xFF4A90E2),
-                    Color(0xFF1E3C72)
-                )
-            )
-            "clouds" -> Brush.verticalGradient(
-                colors = listOf(
-                    Color(0xFF757F9A),
-                    Color(0xFF1C2533)
-                )
-            )
-            "rain", "drizzle" -> Brush.verticalGradient(
-                colors = listOf(
-                    Color(0xFF616161),
-                    Color(0xFF18191A)
-                )
-            )
-            "thunderstorm" -> Brush.verticalGradient(
-                colors = listOf(
-                    Color(0xFF37474F),
-                    Color(0xFF1C1F27)
-                )
-            )
-            "snow" -> Brush.verticalGradient(
-                colors = listOf(
-                    Color(0xFFA3A9B2),
-                    Color(0xFF596164)
-                )
-            )
-            "fog", "mist" -> Brush.verticalGradient(
-                colors = listOf(
-                    Color(0xFF9E9E9E),
-                    Color(0xFF424242)
-                )
-            )
-            else -> Brush.verticalGradient(
-                colors = listOf(
-                    Color(0xFF2E3346),
-                    Color(0xFF1C1B33)
-                )
-            )
+    val weatherColors = LocalWeatherColors.current
+
+    // Sprawdzamy czy jest dzień czy noc
+    val currentHour = LocalTime.now().hour
+    val isNight = currentHour < 6 || currentHour > 19
+
+    val backgroundBrush = remember(weather, isNight) {
+        when {
+            isNight -> Brush.verticalGradient(weatherColors.nightGradient)
+            weather?.main?.lowercase() == "clear" -> Brush.verticalGradient(weatherColors.sunnyGradient)
+            weather?.main?.lowercase() == "clouds" -> Brush.verticalGradient(weatherColors.cloudyGradient)
+            weather?.main?.lowercase() in listOf("rain", "drizzle") -> Brush.verticalGradient(weatherColors.rainyGradient)
+            weather?.main?.lowercase() == "thunderstorm" -> Brush.verticalGradient(weatherColors.stormGradient)
+            weather?.main?.lowercase() == "snow" -> Brush.verticalGradient(weatherColors.snowGradient)
+            weather?.main?.lowercase() in listOf("fog", "mist") -> Brush.verticalGradient(weatherColors.fogGradient)
+            else -> Brush.verticalGradient(weatherColors.defaultGradient)
         }
     }
 

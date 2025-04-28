@@ -185,3 +185,25 @@ fun AirQualityDetailsGrid(components: AirQualityComponents) {
 fun AirQualityDetailItem(
     title: String,
     value: String,
+    modifier: Modifier = Modifier
+) {
+    val weatherColors = LocalWeatherColors.current
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.padding(horizontal = 4.dp)
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodySmall,
+            color = weatherColors.textSecondary
+        )
+
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            color = weatherColors.textPrimary,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}

@@ -41,4 +41,49 @@ interface WeatherApi {
         @Query("units") units: String = "metric",
         @Query("lang") lang: String = "pl"
     ): ForecastResponse
+
+    // app/src/main/java/com/example/weatherapp/data/remote/api/WeatherApi.kt
+// Dodajemy nowe metody do istniejącego interfejsu
+
+    // Indeks UV
+    @GET("uvi")
+    suspend fun getCurrentUVIndex(
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double,
+        @Query("appid") apiKey: String
+    ): UVIndexResponse
+
+    @GET("uvi/forecast")
+    suspend fun getForecastUVIndex(
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double,
+        @Query("cnt") count: Int = 5, // Liczba dni prognozy
+        @Query("appid") apiKey: String
+    ): List<UVIndexResponse>
+
+    // Jakość powietrza
+    @GET("air_pollution")
+    suspend fun getCurrentAirQuality(
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double,
+        @Query("appid") apiKey: String
+    ): AirQualityResponse
+
+    @GET("air_pollution/forecast")
+    suspend fun getForecastAirQuality(
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double,
+        @Query("appid") apiKey: String
+    ): AirQualityResponse
+
+    // Alerty pogodowe
+    @GET("onecall")
+    suspend fun getOneCallData(
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double,
+        @Query("exclude") exclude: String = "minutely,hourly", // Wykluczamy niepotrzebne dane
+        @Query("appid") apiKey: String,
+        @Query("units") units: String = "metric",
+        @Query("lang") lang: String = "pl"
+    ): AlertResponse
 }

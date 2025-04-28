@@ -33,4 +33,28 @@ class WeatherRepository @Inject constructor(
     suspend fun searchCity(query: String): List<GeocodingResponse> {
         return geocodingApi.searchCity(query, 5, Constants.API_KEY)
     }
+
+
+    // Indeks UV
+    suspend fun getCurrentUVIndex(latitude: Double, longitude: Double): UVIndexResponse {
+        return weatherApi.getCurrentUVIndex(latitude, longitude, Constants.API_KEY)
+    }
+
+    suspend fun getForecastUVIndex(latitude: Double, longitude: Double): List<UVIndexResponse> {
+        return weatherApi.getForecastUVIndex(latitude, longitude, 5, Constants.API_KEY)
+    }
+
+    // Jakość powietrza
+    suspend fun getCurrentAirQuality(latitude: Double, longitude: Double): AirQualityResponse {
+        return weatherApi.getCurrentAirQuality(latitude, longitude, Constants.API_KEY)
+    }
+
+    suspend fun getForecastAirQuality(latitude: Double, longitude: Double): AirQualityResponse {
+        return weatherApi.getForecastAirQuality(latitude, longitude, Constants.API_KEY)
+    }
+
+    // Alerty pogodowe i dane one-call
+    suspend fun getWeatherAlerts(latitude: Double, longitude: Double): AlertResponse {
+        return weatherApi.getOneCallData(latitude, longitude, "minutely,hourly", Constants.API_KEY)
+    }
 }

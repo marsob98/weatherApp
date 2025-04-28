@@ -1,10 +1,14 @@
+// Plik: app/src/main/java/com/example/weatherapp/ui/WeatherNavigation.kt
 package com.example.weatherapp.ui
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.weatherapp.ui.details.DayDetailsScreen
 import com.example.weatherapp.ui.favorites.FavoritesScreen
 import com.example.weatherapp.ui.home.HomeScreen
 import com.example.weatherapp.ui.search.SearchScreen
@@ -16,6 +20,9 @@ sealed class Screen(val route: String) {
     object Home : Screen("home")
     object Search : Screen("search")
     object Favorites : Screen("favorites")
+    object DayDetails : Screen("day_details/{date}") {
+        fun createRoute(date: Long): String = "day_details/$date"
+    }
 }
 
 @Composable
@@ -46,6 +53,9 @@ fun WeatherNavigation() {
                 },
                 onNavigateToFavorites = {
                     navController.navigate(Screen.Favorites.route)
+                },
+                onNavigateToDayDetails = { date ->
+                    navController.navigate(Screen.DayDetails.createRoute(date))
                 }
             )
         }
@@ -62,6 +72,20 @@ fun WeatherNavigation() {
         composable(Screen.Favorites.route) {
             FavoritesScreen(
                 weatherViewModel = weatherViewModel,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Screen.DayDetails.route,
+            arguments = listOf(navArgument("date") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val date = backStackEntry.arguments?.getLong("date") ?: 0L
+            DayDetailsScreen(
+                date = date,
+                forecastItems = weatherViewModel.forecastState.value?.list ?: emptyList(),
                 onNavigateBack = {
                     navController.popBackStack()
                 }

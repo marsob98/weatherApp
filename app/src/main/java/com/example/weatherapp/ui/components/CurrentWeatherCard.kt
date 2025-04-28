@@ -21,6 +21,7 @@ import com.example.weatherapp.data.remote.model.WeatherResponse
 import com.example.weatherapp.ui.theme.LocalWeatherColors
 import com.example.weatherapp.ui.utils.formatTimestamp
 import com.example.weatherapp.viewmodel.FavouriteViewModel
+import java.util.*
 
 @Composable
 fun CurrentWeatherCard(
@@ -30,11 +31,10 @@ fun CurrentWeatherCard(
     var isFavourite by remember { mutableStateOf(false) }
     val weatherColors = LocalWeatherColors.current
 
-    // Animowany kolor dla ikony serca
+    // Animowany kolor dla ikony serca - usunąłem problematyczny parametr 'label'
     val heartColor by animateColorAsState(
         targetValue = if (isFavourite) weatherColors.heartActive else weatherColors.heartInactive,
-        animationSpec = tween(300),
-        label = "Heart color"
+        animationSpec = tween(300)
     )
 
     // Sprawdzamy, czy to miasto jest ulubione
@@ -105,8 +105,16 @@ fun CurrentWeatherCard(
                 )
             }
 
+            // Dodanie funkcji rozszerzającej capitalize() jeśli jest przestarzała
+            val description = weather.weather.firstOrNull()?.description?.let {
+                it.replaceFirstChar { char ->
+                    if (char.isLowerCase()) char.titlecase(Locale.getDefault())
+                    else char.toString()
+                }
+            } ?: ""
+
             Text(
-                text = weather.weather.firstOrNull()?.description?.capitalize() ?: "",
+                text = description,
                 style = MaterialTheme.typography.titleLarge,
                 color = weatherColors.textPrimary
             )

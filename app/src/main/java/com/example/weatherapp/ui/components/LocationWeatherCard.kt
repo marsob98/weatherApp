@@ -139,4 +139,38 @@ fun LocationWeatherCard(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
                                 text = "Wilgotność",
-                                style =
+                                style = MaterialTheme.typography.bodySmall,
+                                color = weatherColors.textSecondary
+                            )
+                            Text(
+                                text = "${weather.main.humidity}%",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = weatherColors.textPrimary
+                            )
+                        }
+
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = "Wiatr",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = weatherColors.textSecondary
+                            )
+                            Text(
+                                text = "${weather.wind.speed} m/s",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = weatherColors.textPrimary
+                            )
+                        }
+                    }
+                }
+            } else {
+                Text(
+                    text = "Brak danych o lokalizacji",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = weatherColors.textSecondary,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        }
+    }
+}

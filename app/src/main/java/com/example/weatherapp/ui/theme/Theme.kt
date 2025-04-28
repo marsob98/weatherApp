@@ -42,6 +42,7 @@ private val LightColorScheme = lightColorScheme(
 
 // Dodatkowe kolory dla customowego motywu
 data class WeatherColors(
+    val textPrimary: Color = TextPrimary,
     val cardBackground: Color = CardBackground,
     val cardBackgroundLight: Color = CardBackgroundLight,
     val textSecondary: Color = TextSecondary,

@@ -1,6 +1,7 @@
-// app/src/main/java/com/example/weatherapp/ui/components/DailyForecastSection.kt
+// Plik: app/src/main/java/com/example/weatherapp/ui/components/DailyForecastSection.kt
 package com.example.weatherapp.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
@@ -15,7 +16,10 @@ import com.example.weatherapp.ui.utils.formatDate
 import java.util.*
 
 @Composable
-fun DailyForecastSection(forecast: ForecastResponse) {
+fun DailyForecastSection(
+    forecast: ForecastResponse,
+    onDayClick: (Long) -> Unit = {}
+) {
     // Grupujemy prognozę po dniach
     val dailyForecast = forecast.list.groupBy {
         val date = Date(it.dt * 1000)
@@ -56,7 +60,8 @@ fun DailyForecastSection(forecast: ForecastResponse) {
                     maxTemp = maxTemp.toInt(),
                     minTemp = minTemp.toInt(),
                     weatherDescription = weather.description,
-                    iconCode = weather.icon
+                    iconCode = weather.icon,
+                    onClick = { onDayClick(dayForecasts.first().dt) }
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -71,12 +76,15 @@ fun DailyForecastItem(
     maxTemp: Int,
     minTemp: Int,
     weatherDescription: String,
-    iconCode: String
+    iconCode: String,
+    onClick: () -> Unit = {}
 ) {
     val weatherColors = LocalWeatherColors.current
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -91,7 +99,10 @@ fun DailyForecastItem(
         WeatherIcon(iconCode = iconCode)
 
         Text(
-            text = weatherDescription.capitalize(),
+            text = weatherDescription.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(Locale.getDefault())
+                else it.toString()
+            },
             style = MaterialTheme.typography.bodyMedium,
             color = weatherColors.textPrimary,
             modifier = Modifier

@@ -1,5 +1,4 @@
 // Plik: app/src/main/java/com/example/weatherapp/ui/home/HomeScreen.kt
-
 package com.example.weatherapp.ui.home
 
 import android.Manifest
@@ -29,6 +28,7 @@ fun HomeScreen(
     weatherViewModel: WeatherViewModel,
     onNavigateToSearch: () -> Unit,
     onNavigateToFavorites: () -> Unit,
+    onNavigateToDayDetails: (Long) -> Unit,
     favouriteViewModel: FavouriteViewModel = hiltViewModel()
 ) {
     val currentWeather = weatherViewModel.currentWeatherState.value
@@ -127,7 +127,10 @@ fun HomeScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        DailyForecastSection(forecast)
+                        DailyForecastSection(
+                            forecast = forecast,
+                            onDayClick = onNavigateToDayDetails
+                        )
 
                         Spacer(modifier = Modifier.height(16.dp))
 

@@ -1,9 +1,7 @@
 // Plik: app/src/main/java/com/example/weatherapp/data/remote/api/WeatherApi.kt
 package com.example.weatherapp.data.remote.api
 
-import com.example.weatherapp.data.remote.model.ForecastResponse
-import com.example.weatherapp.data.remote.model.GeocodingResponse
-import com.example.weatherapp.data.remote.model.WeatherResponse
+import com.example.weatherapp.data.remote.model.*
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -41,9 +39,6 @@ interface WeatherApi {
         @Query("units") units: String = "metric",
         @Query("lang") lang: String = "pl"
     ): ForecastResponse
-
-    // app/src/main/java/com/example/weatherapp/data/remote/api/WeatherApi.kt
-// Dodajemy nowe metody do istniejącego interfejsu
 
     // Indeks UV
     @GET("uvi")

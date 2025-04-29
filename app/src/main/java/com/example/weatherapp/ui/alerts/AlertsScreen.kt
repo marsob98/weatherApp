@@ -1,3 +1,4 @@
+// Plik: app/src/main/java/com/example/weatherapp/ui/alerts/AlertsScreen.kt
 package com.example.weatherapp.ui.alerts
 
 import androidx.compose.foundation.background

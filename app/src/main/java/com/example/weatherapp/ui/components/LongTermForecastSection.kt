@@ -1,3 +1,4 @@
+// Plik: app/src/main/java/com/example/weatherapp/ui/components/LongTermForecastSection.kt
 package com.example.weatherapp.ui.components
 
 import androidx.compose.foundation.layout.*
@@ -101,4 +102,36 @@ fun DayForecastItem(
     ) {
         Text(
             text = dayName,
-            style =
+            style = MaterialTheme.typography.bodyMedium,
+            color = weatherColors.textPrimary
+        )
+
+        Text(
+            text = date,
+            style = MaterialTheme.typography.bodySmall,
+            color = weatherColors.textSecondary
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        WeatherIcon(
+            iconCode = iconCode,
+            modifier = Modifier.size(40.dp)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "$maxTemp°",
+            style = MaterialTheme.typography.bodyLarge,
+            color = weatherColors.textPrimary,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        Text(
+            text = "$minTemp°",
+            style = MaterialTheme.typography.bodySmall,
+            color = weatherColors.textSecondary
+        )
+    }
+}

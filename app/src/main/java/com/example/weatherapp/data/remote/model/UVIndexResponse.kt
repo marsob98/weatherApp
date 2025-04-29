@@ -1,4 +1,4 @@
-// app/src/main/java/com/example/weatherapp/data/remote/model/UVIndexResponse.kt
+// Plik: app/src/main/java/com/example/weatherapp/data/remote/model/UVIndexResponse.kt
 package com.example.weatherapp.data.remote.model
 
 import com.google.gson.annotations.SerializedName

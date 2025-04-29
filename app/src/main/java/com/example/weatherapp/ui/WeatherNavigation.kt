@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.weatherapp.ui.alerts.AlertsScreen
 import com.example.weatherapp.ui.details.DayDetailsScreen
 import com.example.weatherapp.ui.favorites.FavoritesScreen
 import com.example.weatherapp.ui.home.HomeScreen
@@ -23,6 +24,7 @@ sealed class Screen(val route: String) {
     object DayDetails : Screen("day_details/{date}") {
         fun createRoute(date: Long): String = "day_details/$date"
     }
+    object Alerts : Screen("alerts")
 }
 
 @Composable
@@ -48,6 +50,7 @@ fun WeatherNavigation() {
         composable(Screen.Home.route) {
             HomeScreen(
                 weatherViewModel = weatherViewModel,
+                navController = navController,
                 onNavigateToSearch = {
                     navController.navigate(Screen.Search.route)
                 },
@@ -86,6 +89,15 @@ fun WeatherNavigation() {
             DayDetailsScreen(
                 date = date,
                 forecastItems = weatherViewModel.forecastState.value?.list ?: emptyList(),
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Screen.Alerts.route) {
+            AlertsScreen(
+                alerts = weatherViewModel.alertsState.value,
                 onNavigateBack = {
                     navController.popBackStack()
                 }

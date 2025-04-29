@@ -3,9 +3,7 @@ package com.example.weatherapp.domain.repository
 
 import com.example.weatherapp.data.remote.api.GeocodingApi
 import com.example.weatherapp.data.remote.api.WeatherApi
-import com.example.weatherapp.data.remote.model.ForecastResponse
-import com.example.weatherapp.data.remote.model.GeocodingResponse
-import com.example.weatherapp.data.remote.model.WeatherResponse
+import com.example.weatherapp.data.remote.model.*
 import com.example.weatherapp.ui.utils.Constants
 import javax.inject.Inject
 
@@ -33,7 +31,6 @@ class WeatherRepository @Inject constructor(
     suspend fun searchCity(query: String): List<GeocodingResponse> {
         return geocodingApi.searchCity(query, 5, Constants.API_KEY)
     }
-
 
     // Indeks UV
     suspend fun getCurrentUVIndex(latitude: Double, longitude: Double): UVIndexResponse {

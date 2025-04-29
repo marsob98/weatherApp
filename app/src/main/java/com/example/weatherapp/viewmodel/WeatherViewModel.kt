@@ -1,5 +1,4 @@
 // Plik: app/src/main/java/com/example/weatherapp/viewmodel/WeatherViewModel.kt
-
 package com.example.weatherapp.viewmodel
 
 import android.location.Location
@@ -7,9 +6,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherapp.data.remote.model.ForecastResponse
-import com.example.weatherapp.data.remote.model.GeocodingResponse
-import com.example.weatherapp.data.remote.model.WeatherResponse
+import com.example.weatherapp.data.remote.model.*
 import com.example.weatherapp.domain.repository.WeatherRepository
 import com.example.weatherapp.ui.utils.Constants
 import com.example.weatherapp.utils.LocationManager
@@ -56,10 +53,29 @@ class WeatherViewModel @Inject constructor(
     private val _isLocationLoading = mutableStateOf(false)
     val isLocationLoading: State<Boolean> = _isLocationLoading
 
+    // Nowe stany dla dodatkowych funkcjonalności
+    private val _uvIndexState = mutableStateOf<UVIndexResponse?>(null)
+    val uvIndexState: State<UVIndexResponse?> = _uvIndexState
+
+    private val _uvForecastState = mutableStateOf<List<UVIndexResponse>?>(null)
+    val uvForecastState: State<List<UVIndexResponse>?> = _uvForecastState
+
+    private val _airQualityState = mutableStateOf<AirQualityResponse?>(null)
+    val airQualityState: State<AirQualityResponse?> = _airQualityState
+
+    private val _alertsState = mutableStateOf<List<Alert>?>(null)
+    val alertsState: State<List<Alert>?> = _alertsState
+
+    private val _astronomicalData = mutableStateOf<AstronomicalData?>(null)
+    val astronomicalData: State<AstronomicalData?> = _astronomicalData
+
+    private val _precipitationData = mutableStateOf<PrecipitationInfo?>(null)
+    val precipitationData: State<PrecipitationInfo?> = _precipitationData
+
     init {
         checkLocationPermission()
         if (locationManager.hasLocationPermission()) {
-            getWeatherForCurrentLocation(true) // Dodajemy parametr true, aby ustawić lokalizację jako główną
+            getWeatherForCurrentLocation(true)
         } else {
             getWeatherForCity(Constants.DEFAULT_CITY)
         }
@@ -72,7 +88,6 @@ class WeatherViewModel @Inject constructor(
                 }
                 .collect { location ->
                     _currentLocation.value = location
-                    // Aktualizuje tylko dane karty lokalizacji, nie głównego widoku
                     updateLocationWeather(location)
                 }
         }
@@ -127,7 +142,6 @@ class WeatherViewModel @Inject constructor(
             _locationWeatherState.value = weatherResponse
         } catch (e: Exception) {
             // Błędy w aktualizacji karty lokalizacji nie powinny wpływać na główny widok
-            // więc nie ustawiamy _error.value
         } finally {
             _isLocationLoading.value = false
         }
@@ -145,6 +159,7 @@ class WeatherViewModel @Inject constructor(
             // Jeśli setAsMain jest true, ustawiamy dane jako główne
             if (setAsMain) {
                 _currentWeatherState.value = weatherResponse
+                _astronomicalData.value = AstronomicalData.fromWeatherResponse(weatherResponse)
             }
 
             _locationWeatherState.value = weatherResponse
@@ -157,6 +172,11 @@ class WeatherViewModel @Inject constructor(
             // Jeśli setAsMain jest true, ustawiamy również prognozę jako główną
             if (setAsMain) {
                 _forecastState.value = forecastResponse
+
+                // Pobieramy dodatkowe dane
+                getUVIndex(location.latitude, location.longitude)
+                getAirQuality(location.latitude, location.longitude)
+                getWeatherAlerts(location.latitude, location.longitude)
             }
 
         } catch (e: Exception) {
@@ -174,9 +194,17 @@ class WeatherViewModel @Inject constructor(
 
                 val weatherResponse = repository.getCurrentWeather(city)
                 _currentWeatherState.value = weatherResponse
+                _astronomicalData.value = AstronomicalData.fromWeatherResponse(weatherResponse)
 
                 val forecastResponse = repository.getForecast(city)
                 _forecastState.value = forecastResponse
+
+                // Pobieramy dodatkowe dane
+                weatherResponse.coord.let { coord ->
+                    getUVIndex(coord.lat, coord.lon)
+                    getAirQuality(coord.lat, coord.lon)
+                    getWeatherAlerts(coord.lat, coord.lon)
+                }
 
             } catch (e: Exception) {
                 _error.value = e.message
@@ -196,12 +224,9 @@ class WeatherViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _isSearching.value = true
-                println("Wyszukiwanie miast dla zapytania: $query")
                 val results = repository.searchCity(query)
-                println("Otrzymano wyniki: ${results.size}")
                 _searchResults.value = results
             } catch (e: Exception) {
-                println("Błąd podczas wyszukiwania: ${e.message}")
                 _error.value = e.message
                 _searchResults.value = emptyList()
             } finally {
@@ -209,25 +234,6 @@ class WeatherViewModel @Inject constructor(
             }
         }
     }
-
-    // app/src/main/java/com/example/weatherapp/viewmodel/WeatherViewModel.kt
-// Dodajemy nowe stany i metody do istniejącego ViewModelu
-
-    // Stany dla nowych danych
-    private val _uvIndexState = mutableStateOf<UVIndexResponse?>(null)
-    val uvIndexState: State<UVIndexResponse?> = _uvIndexState
-
-    private val _uvForecastState = mutableStateOf<List<UVIndexResponse>?>(null)
-    val uvForecastState: State<List<UVIndexResponse>?> = _uvForecastState
-
-    private val _airQualityState = mutableStateOf<AirQualityResponse?>(null)
-    val airQualityState: State<AirQualityResponse?> = _airQualityState
-
-    private val _alertsState = mutableStateOf<List<Alert>?>(null)
-    val alertsState: State<List<Alert>?> = _alertsState
-
-    private val _astronomicalData = mutableStateOf<AstronomicalData?>(null)
-    val astronomicalData: State<AstronomicalData?> = _astronomicalData
 
     // Metody do pobierania nowych danych
     fun getUVIndex(latitude: Double, longitude: Double) {
@@ -239,7 +245,7 @@ class WeatherViewModel @Inject constructor(
                 val forecast = repository.getForecastUVIndex(latitude, longitude)
                 _uvForecastState.value = forecast
             } catch (e: Exception) {
-                _error.value = "Błąd pobierania indeksu UV: ${e.message}"
+                // Błąd pobierania UV nie powinien blokować głównego UI
             }
         }
     }
@@ -250,7 +256,7 @@ class WeatherViewModel @Inject constructor(
                 val response = repository.getCurrentAirQuality(latitude, longitude)
                 _airQualityState.value = response
             } catch (e: Exception) {
-                _error.value = "Błąd pobierania jakości powietrza: ${e.message}"
+                // Błąd pobierania jakości powietrza nie powinien blokować głównego UI
             }
         }
     }
@@ -261,50 +267,8 @@ class WeatherViewModel @Inject constructor(
                 val response = repository.getWeatherAlerts(latitude, longitude)
                 _alertsState.value = response.alerts
             } catch (e: Exception) {
-                _error.value = "Błąd pobierania alertów pogodowych: ${e.message}"
+                // Błąd pobierania alertów nie powinien blokować głównego UI
             }
         }
     }
-
-    // Rozszerzamy istniejące metody o pobieranie nowych danych
-    private suspend fun getWeatherForLocation(location: Location, setAsMain: Boolean = false) {
-        try {
-            _isLoading.value = true
-
-            // Istniejący kod
-            val weatherResponse = repository.getCurrentWeatherByCoordinates(
-                location.latitude,
-                location.longitude
-            )
-
-            if (setAsMain) {
-                _currentWeatherState.value = weatherResponse
-            }
-
-            _locationWeatherState.value = weatherResponse
-
-            val forecastResponse = repository.getForecastByCoordinates(
-                location.latitude,
-                location.longitude
-            )
-
-            if (setAsMain) {
-                _forecastState.value = forecastResponse
-            }
-
-            // Dodajemy pobieranie nowych danych
-            _astronomicalData.value = AstronomicalData.fromWeatherResponse(weatherResponse)
-
-            getUVIndex(location.latitude, location.longitude)
-            getAirQuality(location.latitude, location.longitude)
-            getWeatherAlerts(location.latitude, location.longitude)
-
-        } catch (e: Exception) {
-            _error.value = e.message
-        } finally {
-            _isLoading.value = false
-        }
-    }
-
-// Dodajemy podobne rozszerzenie do metody getWeatherForCity
 }

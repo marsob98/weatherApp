@@ -18,6 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.example.weatherapp.ui.WeatherNavigation
+import com.example.weatherapp.ui.Screen
 import com.example.weatherapp.ui.components.*
 import com.example.weatherapp.viewmodel.FavouriteViewModel
 import com.example.weatherapp.viewmodel.WeatherViewModel
@@ -26,6 +29,7 @@ import com.example.weatherapp.viewmodel.WeatherViewModel
 @Composable
 fun HomeScreen(
     weatherViewModel: WeatherViewModel,
+    navController: NavController,
     onNavigateToSearch: () -> Unit,
     onNavigateToFavorites: () -> Unit,
     onNavigateToDayDetails: (Long) -> Unit,
@@ -39,6 +43,13 @@ fun HomeScreen(
     val locationWeather = weatherViewModel.locationWeatherState.value
     val isLocationLoading = weatherViewModel.isLocationLoading.value
     val favourites by favouriteViewModel.favourites.collectAsState(initial = emptyList())
+
+    // Nowe stany dla dodatkowych funkcjonalności
+    val uvIndex = weatherViewModel.uvIndexState.value
+    val airQuality = weatherViewModel.airQualityState.value
+    val alerts = weatherViewModel.alertsState.value
+    val astronomicalData = weatherViewModel.astronomicalData.value
+    val precipitationData = weatherViewModel.precipitationData.value
 
     val backgroundBrush = remember {
         Brush.verticalGradient(
@@ -96,13 +107,13 @@ fun HomeScreen(
                             .align(Alignment.Center)
                             .padding(16.dp),
                         textAlign = TextAlign.Center
-                    )
+                    ) // Plik: app/src/main/java/com/example/weatherapp/ui/home/HomeScreen.kt (kontynuacja)
                 } else if (currentWeather != null && forecast != null) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState())
-                            .padding(16.dp),
+                            .padding(bottom = 16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         // Karta pogody opartej na lokalizacji (jeśli mamy uprawnienia)
@@ -116,6 +127,7 @@ fun HomeScreen(
                             Spacer(modifier = Modifier.height(16.dp))
                         }
 
+                        // Karta obecnej pogody
                         CurrentWeatherCard(
                             weather = currentWeather,
                             favouriteViewModel = favouriteViewModel
@@ -123,10 +135,12 @@ fun HomeScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
+                        // Prognoza godzinowa
                         HourlyForecastSection(forecast.list.take(24))
 
                         Spacer(modifier = Modifier.height(16.dp))
 
+                        // Prognoza dzienna
                         DailyForecastSection(
                             forecast = forecast,
                             onDayClick = onNavigateToDayDetails
@@ -134,7 +148,55 @@ fun HomeScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
+                        // Szczegóły pogody
                         WeatherDetailsCard(currentWeather)
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Nowe komponenty
+
+                        // Indeks UV
+                        if (uvIndex != null) {
+                            UVIndexCard(uvIndex = uvIndex)
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+
+                        // Jakość powietrza
+                        if (airQuality != null) {
+                            AirQualityCard(airQuality = airQuality)
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+
+                        // Dane astronomiczne
+                        if (astronomicalData != null) {
+                            AstronomicalCard(astronomicalData = astronomicalData)
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+
+                        // Informacje o opadach
+                        if (precipitationData != null) {
+                            PrecipitationCard(precipitationInfo = precipitationData)
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+
+                        // Alerty pogodowe
+                        if (alerts != null && alerts.isNotEmpty()) {
+                            WeatherAlertsCard(
+                                alerts = alerts,
+                                onViewAllAlerts = {
+                                    navController.navigate(Screen.Alerts.route)
+                                }
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+
+                        // Prognoza długoterminowa
+                        if (forecast != null) {
+                            LongTermForecastSection(
+                                forecast = forecast,
+                                onDayClick = onNavigateToDayDetails
+                            )
+                        }
                     }
                 }
             }

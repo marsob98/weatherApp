@@ -1,23 +1,21 @@
-// app/src/main/java/com/example/weatherapp/ui/components/CurrentWeatherCard.kt
 package com.example.weatherapp.ui.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.weatherapp.R
 import com.example.weatherapp.data.remote.model.WeatherResponse
 import com.example.weatherapp.ui.theme.LocalWeatherColors
 import com.example.weatherapp.ui.utils.formatTimestamp
@@ -68,7 +66,7 @@ fun CurrentWeatherCard(
             ) {
                 Text(
                     text = weather.name,
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.h5,
                     color = weatherColors.textPrimary,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
@@ -89,7 +87,10 @@ fun CurrentWeatherCard(
                 ) {
                     Icon(
                         imageVector = if (isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = if (isFavourite) "Usuń z ulubionych" else "Dodaj do ulubionych",
+                        contentDescription = if (isFavourite)
+                            stringResource(R.string.favorite_remove)
+                        else
+                            stringResource(R.string.favorite_add),
                         tint = heartColor
                     )
                 }
@@ -112,8 +113,8 @@ fun CurrentWeatherCard(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Text(
-                    text = "${weather.main.temp.toInt()}°",
-                    style = MaterialTheme.typography.displayLarge,
+                    text = stringResource(R.string.weather_temp_format, weather.main.temp.toInt()),
+                    style = MaterialTheme.typography.h2,
                     color = weatherColors.textPrimary,
                     fontWeight = FontWeight.Bold
                 )
@@ -129,7 +130,7 @@ fun CurrentWeatherCard(
 
             Text(
                 text = description,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.h6,
                 color = weatherColors.textPrimary
             )
 
@@ -141,26 +142,30 @@ fun CurrentWeatherCard(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Odczuwalna",
-                        style = MaterialTheme.typography.bodySmall,
+                        text = stringResource(R.string.weather_feels_like),
+                        style = MaterialTheme.typography.caption,
                         color = weatherColors.textSecondary
                     )
                     Text(
-                        text = "${weather.main.feelsLike.toInt()}°",
-                        style = MaterialTheme.typography.bodyLarge,
+                        text = stringResource(R.string.weather_temp_format, weather.main.feelsLike.toInt()),
+                        style = MaterialTheme.typography.body1,
                         color = weatherColors.textPrimary
                     )
                 }
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Min/Max",
-                        style = MaterialTheme.typography.bodySmall,
+                        text = stringResource(R.string.weather_min_max),
+                        style = MaterialTheme.typography.caption,
                         color = weatherColors.textSecondary
                     )
                     Text(
-                        text = "${weather.main.tempMin.toInt()}°/${weather.main.tempMax.toInt()}°",
-                        style = MaterialTheme.typography.bodyLarge,
+                        text = stringResource(
+                            R.string.weather_min_max_format,
+                            weather.main.tempMin.toInt(),
+                            weather.main.tempMax.toInt()
+                        ),
+                        style = MaterialTheme.typography.body1,
                         color = weatherColors.textPrimary
                     )
                 }
@@ -169,8 +174,12 @@ fun CurrentWeatherCard(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Wschód: ${formatTimestamp(weather.sys.sunrise)} • Zachód: ${formatTimestamp(weather.sys.sunset)}",
-                style = MaterialTheme.typography.bodySmall,
+                text = stringResource(
+                    R.string.weather_sunrise_sunset_format,
+                    formatTimestamp(weather.sys.sunrise),
+                    formatTimestamp(weather.sys.sunset)
+                ),
+                style = MaterialTheme.typography.caption,
                 color = weatherColors.textSecondary
             )
         }

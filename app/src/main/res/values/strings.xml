@@ -1,3 +1,145 @@
 <resources>
     <string name="app_name">WeatherApp</string>
+
+    <!-- Ogólne -->
+    <string name="error_location">Błąd lokalizacji: %1$s</string>
+    <string name="error_generic">Wystąpił błąd: %1$s</string>
+    <string name="error_no_location_data">Brak danych o lokalizacji</string>
+    <string name="error_no_data_for_day">Brak danych dla wybranego dnia</string>
+    <string name="error_loading_weather">Nie udało się załadować danych pogodowych. Spróbuj ponownie.</string>
+    <string name="error_network">Problem z połączeniem sieciowym. Sprawdź swoje połączenie i spróbuj ponownie.</string>
+    <string name="error_search">Błąd wyszukiwania: %1$s</string>
+    <string name="no_cities_found">Nie znaleziono miast dla zapytania: %1$s</string>
+    <string name="empty_favourites">Brak ulubionych miast</string>
+
+    <!-- Ekrany i nawigacja -->
+    <string name="screen_home">Pogoda</string>
+    <string name="screen_search">Wyszukaj miasto</string>
+    <string name="screen_favorites">Ulubione miasta</string>
+    <string name="screen_day_details">Szczegóły dnia</string>
+    <string name="screen_alerts">Alerty pogodowe</string>
+    <string name="action_back">Powrót</string>
+    <string name="action_search">Szukaj</string>
+    <string name="action_favorites">Ulubione</string>
+    <string name="action_refresh">Odśwież</string>
+
+    <!-- Wyszukiwanie -->
+    <string name="search_hint">Wpisz nazwę miasta…</string>
+    <string name="search_no_results">Nie znaleziono miast dla zapytania: %1$s</string>
+    <string name="search_min_chars">Wpisz co najmniej 3 znaki</string>
+
+    <!-- Lokalizacja -->
+    <string name="location_your">Twoja lokalizacja</string>
+    <string name="location_no_data">Brak danych o lokalizacji</string>
+    <string name="location_permission_rationale">Lokalizacja jest potrzebna, aby pokazać pogodę dla Twojej aktualnej lokalizacji.</string>
+    <string name="location_permission_request">Zezwól na dostęp do lokalizacji, aby zobaczyć pogodę w Twojej okolicy.</string>
+    <string name="location_permission_allow">Zezwól na dostęp</string>
+
+    <!-- Komponenty pogodowe -->
+    <string name="weather_details">Szczegóły</string>
+    <string name="weather_humidity">Wilgotność</string>
+    <string name="weather_humidity_format">%1$d%%</string>
+    <string name="weather_pressure">Ciśnienie</string>
+    <string name="weather_pressure_format">%1$d hPa</string>
+    <string name="weather_wind">Wiatr</string>
+    <string name="weather_wind_format">%1$.1f m/s</string>
+    <string name="weather_visibility">Widoczność</string>
+    <string name="weather_visibility_format">%1$d km</string>
+    <string name="weather_feels_like">Odczuwalna</string>
+    <string name="weather_min_max">Min/Max</string>
+    <string name="weather_min_max_format">%1$d°/%2$d°</string>
+    <string name="weather_temp_format">%1$d°</string>
+    <string name="weather_daily_forecast">Prognoza tygodniowa</string>
+    <string name="weather_hourly_forecast">Prognoza godzinowa</string>
+    <string name="weather_long_term_forecast">Długoterminowa prognoza</string>
+    <string name="weather_sunrise">Wschód</string>
+    <string name="weather_sunset">Zachód</string>
+    <string name="weather_sunrise_sunset_format">Wschód: %1$s • Zachód: %2$s</string>
+
+    <!-- Sekcja astronomii -->
+    <string name="astronomy_title">Dane astronomiczne</string>
+    <string name="astronomy_day_length">Długość dnia</string>
+    <string name="astronomy_moon_phase">Faza księżyca</string>
+
+    <!-- Jakość powietrza -->
+    <string name="air_quality_title">Jakość powietrza</string>
+    <string name="air_quality_recommendations">Zalecenia:</string>
+    <string name="air_quality_detailed">Szczegółowe pomiary:</string>
+    <string name="air_quality_level_good">Dobra</string>
+    <string name="air_quality_level_moderate">Umiarkowana</string>
+    <string name="air_quality_level_unhealthy_sensitive">Niezdrowa dla wrażliwych</string>
+    <string name="air_quality_level_unhealthy">Niezdrowa</string>
+    <string name="air_quality_level_very_unhealthy">Bardzo niezdrowa</string>
+    <string name="air_quality_level_hazardous">Niebezpieczna</string>
+
+    <!-- Indeks UV -->
+    <string name="uv_index_title">Indeks UV</string>
+    <string name="uv_recommendations">Zalecenia:</string>
+    <string name="uv_level_low">Niski</string>
+    <string name="uv_level_moderate">Umiarkowany</string>
+    <string name="uv_level_high">Wysoki</string>
+    <string name="uv_level_very_high">Bardzo wysoki</string>
+    <string name="uv_level_extreme">Ekstremalny</string>
+
+    <!-- Alerty pogodowe -->
+    <string name="alerts_title">Alerty pogodowe</string>
+    <string name="alerts_view_all">Zobacz wszystkie</string>
+    <string name="alerts_none">Brak aktywnych alertów pogodowych</string>
+    <string name="alerts_none_description">Aktualnie nie ma żadnych ostrzeżeń dla tego obszaru</string>
+    <string name="alerts_more">+%1$d więcej alertów</string>
+
+    <!-- Opady -->
+    <string name="precipitation_title">Informacje o opadach</string>
+    <string name="precipitation_intensity">Intensywność</string>
+    <string name="precipitation_light">Lekkie</string>
+    <string name="precipitation_heavy">Intensywne</string>
+    <string name="precipitation_recommendation">Zalecenia:</string>
+
+    <!-- Szczegóły dnia -->
+    <string name="day_summary">Podsumowanie dnia</string>
+    <string name="day_hourly_forecast">Prognoza godzinowa</string>
+
+    <!-- Ulubione -->
+    <string name="favorite_add">Dodaj do ulubionych</string>
+    <string name="favorite_remove">Usuń z ulubionych</string>
+
+    <!-- Splash screen -->
+    <string name="splash_app_name">Catch The Sun</string>
+
+    <!-- Dni tygodnia -->
+    <string name="monday">Poniedziałek</string>
+    <string name="tuesday">Wtorek</string>
+    <string name="wednesday">Środa</string>
+    <string name="thursday">Czwartek</string>
+    <string name="friday">Piątek</string>
+    <string name="saturday">Sobota</string>
+    <string name="sunday">Niedziela</string>
+
+    <!-- Miesiące -->
+    <string name="january">Styczeń</string>
+    <string name="february">Luty</string>
+    <string name="march">Marzec</string>
+    <string name="april">Kwiecień</string>
+    <string name="may">Maj</string>
+    <string name="june">Czerwiec</string>
+    <string name="july">Lipiec</string>
+    <string name="august">Sierpień</string>
+    <string name="september">Wrzesień</string>
+    <string name="october">Październik</string>
+    <string name="november">Listopad</string>
+    <string name="december">Grudzień</string>
+
+    <!-- Miesiące (skrót) -->
+    <string name="jan">Sty</string>
+    <string name="feb">Lut</string>
+    <string name="mar">Mar</string>
+    <string name="apr">Kwi</string>
+    <string name="may_short">Maj</string>
+    <string name="jun">Cze</string>
+    <string name="jul">Lip</string>
+    <string name="aug">Sie</string>
+    <string name="sep">Wrz</string>
+    <string name="oct">Paź</string>
+    <string name="nov">Lis</string>
+    <string name="dec">Gru</string>
 </resources>

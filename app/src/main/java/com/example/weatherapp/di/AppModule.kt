@@ -1,4 +1,3 @@
-// Plik: app/src/main/java/com/example/weatherapp/di/AppModule.kt
 package com.example.weatherapp.di
 
 import android.content.Context
@@ -24,6 +23,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Provides
+    @Singleton
+    fun provideApiKey(@ApplicationContext context: Context): String {
+        return context.getString(com.example.weatherapp.R.string.openweather_api_key)
+    }
 
     @Provides
     @Singleton

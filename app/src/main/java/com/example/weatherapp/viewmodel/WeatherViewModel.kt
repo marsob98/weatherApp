@@ -1,27 +1,32 @@
-// Plik: app/src/main/java/com/example/weatherapp/viewmodel/WeatherViewModel.kt
 package com.example.weatherapp.viewmodel
 
+import android.content.Context
 import android.location.Location
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weatherapp.R
 import com.example.weatherapp.data.remote.model.*
 import com.example.weatherapp.domain.repository.WeatherRepository
 import com.example.weatherapp.ui.utils.Constants
 import com.example.weatherapp.utils.LocationManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
     private val repository: WeatherRepository,
-    private val locationManager: LocationManager
+    private val locationManager: LocationManager,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _currentWeatherState = mutableStateOf<WeatherResponse?>(null)
@@ -85,7 +90,7 @@ class WeatherViewModel @Inject constructor(
         viewModelScope.launch {
             locationManager.locationUpdates()
                 .catch { e ->
-                    _error.value = "Błąd lokalizacji: ${e.message}"
+                    _error.value = context.getString(R.string.error_location, e.localizedMessage ?: "Unknown error")
                 }
                 .collect { location ->
                     _currentLocation.value = location
@@ -117,13 +122,14 @@ class WeatherViewModel @Inject constructor(
                         updateLocationWeather(location)
                     }
                 } else {
+                    _error.value = context.getString(R.string.error_no_location_data)
                     // Jeśli nie możemy uzyskać lokalizacji, użyj domyślnego miasta
                     if (_currentWeatherState.value == null) {
                         getWeatherForCity(Constants.DEFAULT_CITY)
                     }
                 }
             } catch (e: Exception) {
-                _error.value = e.message
+                handleException(e)
                 if (_currentWeatherState.value == null) {
                     getWeatherForCity(Constants.DEFAULT_CITY)
                 }
@@ -142,7 +148,9 @@ class WeatherViewModel @Inject constructor(
             )
             _locationWeatherState.value = weatherResponse
         } catch (e: Exception) {
-            // Błędy w aktualizacji karty lokalizacji nie powinny wpływać na główny widok
+            // Błędy w aktualizacji karty lokalizacji logujemy, ale nie pokazujemy użytkownikowi
+            // gdyż nie powinny wpływać na główny widok
+            e.printStackTrace()
         } finally {
             _isLocationLoading.value = false
         }
@@ -181,7 +189,7 @@ class WeatherViewModel @Inject constructor(
             }
 
         } catch (e: Exception) {
-            _error.value = e.message
+            handleException(e)
         } finally {
             _isLoading.value = false
         }
@@ -208,7 +216,7 @@ class WeatherViewModel @Inject constructor(
                 }
 
             } catch (e: Exception) {
-                _error.value = e.message
+                handleException(e)
             } finally {
                 _isLoading.value = false
             }
@@ -225,10 +233,11 @@ class WeatherViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _isSearching.value = true
+                _error.value = null
                 val results = repository.searchCity(query)
                 _searchResults.value = results
             } catch (e: Exception) {
-                _error.value = e.message
+                _error.value = context.getString(R.string.error_search, e.localizedMessage ?: "Unknown error")
                 _searchResults.value = emptyList()
             } finally {
                 _isSearching.value = false
@@ -236,7 +245,7 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
-    // Metody do pobierania nowych danych
+    // Metody do pobierania nowych danych z lepszą obsługą błędów
     fun getUVIndex(latitude: Double, longitude: Double) {
         viewModelScope.launch {
             try {
@@ -246,7 +255,8 @@ class WeatherViewModel @Inject constructor(
                 val forecast = repository.getForecastUVIndex(latitude, longitude)
                 _uvForecastState.value = forecast
             } catch (e: Exception) {
-                // Błąd pobierania UV nie powinien blokować głównego UI
+                // Błąd pobierania UV nie powinien blokować głównego UI, ale logujemy go
+                e.printStackTrace()
             }
         }
     }
@@ -257,7 +267,8 @@ class WeatherViewModel @Inject constructor(
                 val response = repository.getCurrentAirQuality(latitude, longitude)
                 _airQualityState.value = response
             } catch (e: Exception) {
-                // Błąd pobierania jakości powietrza nie powinien blokować głównego UI
+                // Błąd pobierania jakości powietrza nie powinien blokować głównego UI, ale logujemy go
+                e.printStackTrace()
             }
         }
     }
@@ -268,7 +279,8 @@ class WeatherViewModel @Inject constructor(
                 val response = repository.getWeatherAlerts(latitude, longitude)
                 _alertsState.value = response.alerts
             } catch (e: Exception) {
-                // Błąd pobierania alertów nie powinien blokować głównego UI
+                // Błąd pobierania alertów nie powinien blokować głównego UI, ale logujemy go
+                e.printStackTrace()
             }
         }
     }
@@ -303,8 +315,23 @@ class WeatherViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _error.value = e.message
+                handleException(e)
             }
         }
+    }
+
+    // Funkcja pomocnicza do obsługi różnych typów wyjątków
+    private fun handleException(e: Exception) {
+        when (e) {
+            is IOException -> _error.value = context.getString(R.string.error_network)
+            is HttpException -> {
+                when (e.code()) {
+                    404 -> _error.value = context.getString(R.string.error_loading_weather)
+                    else -> _error.value = "${e.code()}: ${e.message()}"
+                }
+            }
+            else -> _error.value = context.getString(R.string.error_generic, e.localizedMessage ?: "Unknown error")
+        }
+        e.printStackTrace()
     }
 }

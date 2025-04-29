@@ -6,25 +6,24 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
-// Importujemy Card z biblioteki Material
-import androidx.compose.material.Card
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.runtime.collectAsState
+import com.example.weatherapp.R
 import com.example.weatherapp.data.local.entity.FavouriteEntity
 import com.example.weatherapp.viewmodel.FavouriteViewModel
 import com.example.weatherapp.viewmodel.WeatherViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoritesScreen(
     weatherViewModel: WeatherViewModel,
@@ -44,13 +43,19 @@ fun FavoritesScreen(
 
     Scaffold(
         topBar = {
-            SmallTopAppBar(
-                title = { Text("Ulubione miasta") },
+            TopAppBar(
+                title = { Text(stringResource(R.string.screen_favorites)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Powrót")
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = stringResource(R.string.action_back),
+                            tint = Color.White
+                        )
                     }
-                }
+                },
+                backgroundColor = Color.Transparent,
+                elevation = 0.dp
             )
         }
     ) { paddingValues ->
@@ -62,8 +67,8 @@ fun FavoritesScreen(
         ) {
             if (favourites.isEmpty()) {
                 Text(
-                    text = "Brak ulubionych miast",
-                    style = MaterialTheme.typography.bodyLarge,
+                    text = stringResource(R.string.empty_favourites),
+                    style = MaterialTheme.typography.body1,
                     color = Color.White,
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -99,7 +104,6 @@ fun FavouriteItem(
     onItemClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
-    // Używamy Card z biblioteki Material
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -117,7 +121,7 @@ fun FavouriteItem(
         ) {
             Text(
                 text = favourite.cityName,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.body1,
                 color = Color.White
             )
 
@@ -126,7 +130,7 @@ fun FavouriteItem(
             IconButton(onClick = onDeleteClick) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Usuń",
+                    contentDescription = stringResource(R.string.favorite_remove),
                     tint = Color.White
                 )
             }

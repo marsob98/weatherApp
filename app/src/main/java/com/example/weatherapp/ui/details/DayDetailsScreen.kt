@@ -1,4 +1,4 @@
-// Plik: app/src/main/java/com/example/weatherapp/ui/details/DayDetailsScreen.kt
+// app/src/main/java/com/example/weatherapp/ui/details/DayDetailsScreen.kt
 package com.example.weatherapp.ui.details
 
 import androidx.compose.foundation.background
@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,12 +17,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.weatherapp.data.remote.model.ForecastItem
-import com.example.weatherapp.ui.components.GlassmorphicCard
-import com.example.weatherapp.ui.components.WeatherIcon
+import com.example.weatherapp.data.remote.model.*
+import com.example.weatherapp.ui.components.*
 import com.example.weatherapp.ui.theme.LocalWeatherColors
 import com.example.weatherapp.ui.utils.formatDate
 import com.example.weatherapp.ui.utils.formatDateTime
+import com.example.weatherapp.viewmodel.WeatherViewModel
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,9 +30,12 @@ import java.util.*
 fun DayDetailsScreen(
     date: Long,
     forecastItems: List<ForecastItem>,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    weatherViewModel: WeatherViewModel
 ) {
     val weatherColors = LocalWeatherColors.current
+
+    // Filtrujemy prognozę dla wybranego dnia
     val dayForecast = remember(forecastItems, date) {
         forecastItems.filter {
             val calendar1 = Calendar.getInstance().apply { timeInMillis = it.dt * 1000 }
@@ -41,6 +45,13 @@ fun DayDetailsScreen(
                     calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)
         }
     }
+
+    // Pobieramy dane z WeatherViewModel
+    val uvIndex = weatherViewModel.uvIndexState.value
+    val airQuality = weatherViewModel.airQualityState.value
+    val alerts = weatherViewModel.alertsState.value
+    val astronomicalData = weatherViewModel.astronomicalData.value
+    val precipitationData = weatherViewModel.precipitationData.value
 
     val backgroundBrush = remember {
         Brush.verticalGradient(
@@ -87,6 +98,41 @@ fun DayDetailsScreen(
                     DaySummaryCard(dayForecast)
 
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    // Dodane nowe komponenty - podobnie jak na ekranie głównym
+
+                    // Dane astronomiczne
+                    if (astronomicalData != null) {
+                        AstronomicalCard(astronomicalData = astronomicalData)
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    // Indeks UV
+                    if (uvIndex != null) {
+                        UVIndexCard(uvIndex = uvIndex)
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    // Jakość powietrza
+                    if (airQuality != null) {
+                        AirQualityCard(airQuality = airQuality)
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    // Informacje o opadach
+                    if (precipitationData != null) {
+                        PrecipitationCard(precipitationInfo = precipitationData)
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    // Alerty pogodowe
+                    if (alerts != null && alerts.isNotEmpty()) {
+                        WeatherAlertsCard(
+                            alerts = alerts,
+                            onViewAllAlerts = {}  // W widoku szczegółowym nie potrzebujemy nawigacji
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
 
                     // Godzinowe prognozy
                     HourlyDetailCard(dayForecast)

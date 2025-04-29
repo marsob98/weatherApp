@@ -58,6 +58,8 @@ fun WeatherNavigation() {
                     navController.navigate(Screen.Favorites.route)
                 },
                 onNavigateToDayDetails = { date ->
+                    // Zaktualizuj dane dla wybranego dnia przed nawigacją
+                    weatherViewModel.getDayData(date)
                     navController.navigate(Screen.DayDetails.createRoute(date))
                 }
             )
@@ -91,7 +93,8 @@ fun WeatherNavigation() {
                 forecastItems = weatherViewModel.forecastState.value?.list ?: emptyList(),
                 onNavigateBack = {
                     navController.popBackStack()
-                }
+                },
+                weatherViewModel = weatherViewModel
             )
         }
 

@@ -1,4 +1,4 @@
-// Plik: app/src/main/java/com/example/weatherapp/ui/components/LongTermForecastSection.kt
+// app/src/main/java/com/example/weatherapp/ui/components/LongTermForecastSection.kt
 package com.example.weatherapp.ui.components
 
 import androidx.compose.foundation.layout.*
@@ -28,7 +28,7 @@ fun LongTermForecastSection(
         val cal = Calendar.getInstance()
         cal.time = date
         cal.get(Calendar.DAY_OF_YEAR)
-    }.values.take(10) // Bierzemy prognozy na 10 dni
+    }.values.take(10) // Bierzemy prognozy na 10 dni zamiast 7
 
     val weatherColors = LocalWeatherColors.current
     val dateFormat = SimpleDateFormat("d MMM", Locale.getDefault())

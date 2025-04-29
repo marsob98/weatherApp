@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -268,6 +269,41 @@ class WeatherViewModel @Inject constructor(
                 _alertsState.value = response.alerts
             } catch (e: Exception) {
                 // Błąd pobierania alertów nie powinien blokować głównego UI
+            }
+        }
+    }
+
+    /**
+     * Pobiera dane dla konkretnego dnia na podstawie timestampu
+     */
+    fun getDayData(timestamp: Long) {
+        viewModelScope.launch {
+            try {
+                val calendar = Calendar.getInstance()
+                calendar.timeInMillis = timestamp * 1000
+
+                // Pobierz dane z forecast state
+                val dayForecast = _forecastState.value?.list?.filter {
+                    val forecastCal = Calendar.getInstance()
+                    forecastCal.timeInMillis = it.dt * 1000
+
+                    forecastCal.get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR) &&
+                            forecastCal.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)
+                } ?: emptyList()
+
+                if (dayForecast.isNotEmpty()) {
+                    // Użyj pierwszego elementu prognozy, aby uzyskać współrzędne
+                    val cityCoord = _forecastState.value?.city?.coord
+
+                    if (cityCoord != null) {
+                        // Pobierz dodatkowe dane dla wybranego dnia, używając współrzędnych miasta
+                        getUVIndex(cityCoord.lat, cityCoord.lon)
+                        getAirQuality(cityCoord.lat, cityCoord.lon)
+                        getWeatherAlerts(cityCoord.lat, cityCoord.lon)
+                    }
+                }
+            } catch (e: Exception) {
+                _error.value = e.message
             }
         }
     }

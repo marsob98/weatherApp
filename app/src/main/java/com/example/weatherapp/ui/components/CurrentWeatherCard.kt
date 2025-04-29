@@ -15,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.weatherapp.data.remote.model.WeatherResponse
@@ -31,7 +32,7 @@ fun CurrentWeatherCard(
     var isFavourite by remember { mutableStateOf(false) }
     val weatherColors = LocalWeatherColors.current
 
-    // Animowany kolor dla ikony serca - usunąłem problematyczny parametr 'label'
+    // Animowany kolor dla ikony serca
     val heartColor by animateColorAsState(
         targetValue = if (isFavourite) weatherColors.heartActive else weatherColors.heartInactive,
         animationSpec = tween(300)
@@ -44,7 +45,7 @@ fun CurrentWeatherCard(
         }
     }
 
-    // Używamy nowego komponentu GlassmorphicCard zamiast standardowej Card
+    // Używamy GlassmorphicCard zamiast standardowej Card
     GlassmorphicCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -57,11 +58,24 @@ fun CurrentWeatherCard(
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Dodajemy przycisk do zarządzania ulubionymi
+            // Dodajemy nazwę miasta na górze karty
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp, start = 16.dp, end = 16.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                Text(
+                    text = weather.name,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = weatherColors.textPrimary,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f)
+                )
+
+                // Przycisk ulubione przenosimy do tego samego wiersza co nazwa miasta
                 IconButton(
                     onClick = {
                         if (isFavourite) {

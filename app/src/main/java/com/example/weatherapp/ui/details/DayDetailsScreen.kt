@@ -1,4 +1,4 @@
-// app/src/main/java/com/example/weatherapp/ui/details/DayDetailsScreen.kt
+// Plik: app/src/main/java/com/example/weatherapp/ui/details/DayDetailsScreen.kt
 package com.example.weatherapp.ui.details
 
 import androidx.compose.foundation.background
@@ -9,13 +9,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.weatherapp.data.remote.model.*
 import com.example.weatherapp.ui.components.*
@@ -34,6 +34,8 @@ fun DayDetailsScreen(
     weatherViewModel: WeatherViewModel
 ) {
     val weatherColors = LocalWeatherColors.current
+    val currentWeather = weatherViewModel.currentWeatherState.value
+    val cityName = currentWeather?.name ?: ""
 
     // Filtrujemy prognozę dla wybranego dnia
     val dayForecast = remember(forecastItems, date) {
@@ -94,12 +96,24 @@ fun DayDetailsScreen(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    // Dodajemy nazwę miasta na górze
+                    if (cityName.isNotEmpty()) {
+                        Text(
+                            text = cityName,
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 16.dp)
+                        )
+                    }
+
                     // Podsumowanie dnia
                     DaySummaryCard(dayForecast)
 
                     Spacer(modifier = Modifier.height(16.dp))
-
-                    // Dodane nowe komponenty - podobnie jak na ekranie głównym
 
                     // Dane astronomiczne
                     if (astronomicalData != null) {

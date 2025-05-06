@@ -1,4 +1,5 @@
-// Plik: app/src/main/java/com/example/weatherapp/ui/components/DailyForecastSection.kt
+// app/src/main/java/com/example/weatherapp/ui/components/DailyForecastSection.kt
+
 package com.example.weatherapp.ui.components
 
 import androidx.compose.foundation.clickable
@@ -8,11 +9,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.weatherapp.data.remote.model.ForecastResponse
 import com.example.weatherapp.ui.theme.LocalWeatherColors
-import com.example.weatherapp.ui.utils.formatDate
+import com.example.weatherapp.ui.utils.formatDateShortName
 import java.util.*
 
 @Composable
@@ -29,6 +31,7 @@ fun DailyForecastSection(
     }.values.take(7) // Bierzemy tylko 7 dni
 
     val weatherColors = LocalWeatherColors.current
+    val context = LocalContext.current
 
     GlassmorphicCard(
         modifier = Modifier
@@ -56,7 +59,7 @@ fun DailyForecastSection(
                 val weather = dayForecasts.first().weather.first()
 
                 DailyForecastItem(
-                    day = formatDate(dayForecasts.first().dt),
+                    day = formatDateShortName(dayForecasts.first().dt, context),
                     maxTemp = maxTemp.toInt(),
                     minTemp = minTemp.toInt(),
                     weatherDescription = weather.description,

@@ -142,4 +142,12 @@
     <string name="oct">Paź</string>
     <string name="nov">Lis</string>
     <string name="dec">Gru</string>
+
+    <string name="monday_short">Pon</string>
+    <string name="tuesday_short">Wt</string>
+    <string name="wednesday_short">Śr</string>
+    <string name="thursday_short">Czw</string>
+    <string name="friday_short">Pt</string>
+    <string name="saturday_short">Sob</string>
+    <string name="sunday_short">Nd</string>
 </resources>

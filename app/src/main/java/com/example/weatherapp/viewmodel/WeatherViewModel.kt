@@ -1,3 +1,5 @@
+// app/src/main/java/com/example/weatherapp/viewmodel/WeatherViewModel.kt
+
 package com.example.weatherapp.viewmodel
 
 import android.content.Context
@@ -11,6 +13,7 @@ import com.example.weatherapp.data.remote.model.*
 import com.example.weatherapp.domain.repository.WeatherRepository
 import com.example.weatherapp.ui.utils.Constants
 import com.example.weatherapp.utils.LocationManager
+import com.example.weatherapp.utils.NetworkUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,6 +62,10 @@ class WeatherViewModel @Inject constructor(
     private val _isLocationLoading = mutableStateOf(false)
     val isLocationLoading: State<Boolean> = _isLocationLoading
 
+    // Stan połączenia z internetem
+    private val _isNetworkAvailable = mutableStateOf(false)
+    val isNetworkAvailable: State<Boolean> = _isNetworkAvailable
+
     // Nowe stany dla dodatkowych funkcjonalności
     private val _uvIndexState = mutableStateOf<UVIndexResponse?>(null)
     val uvIndexState: State<UVIndexResponse?> = _uvIndexState
@@ -79,6 +86,7 @@ class WeatherViewModel @Inject constructor(
     val precipitationData: State<PrecipitationInfo?> = _precipitationData
 
     init {
+        checkNetworkAvailability()
         checkLocationPermission()
         if (locationManager.hasLocationPermission()) {
             getWeatherForCurrentLocation(true)
@@ -99,6 +107,10 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
+    fun checkNetworkAvailability() {
+        _isNetworkAvailable.value = NetworkUtils.isNetworkAvailable(context)
+    }
+
     fun checkLocationPermission() {
         _locationPermissionGranted.value = locationManager.hasLocationPermission()
     }
@@ -109,6 +121,13 @@ class WeatherViewModel @Inject constructor(
             try {
                 _isLocationLoading.value = true
                 _error.value = null
+
+                // Sprawdź połączenie z internetem
+                if (!NetworkUtils.isNetworkAvailable(context)) {
+                    _error.value = context.getString(R.string.error_network)
+                    _isLocationLoading.value = false
+                    return@launch
+                }
 
                 val location = locationManager.getLastLocation()
                 if (location != null) {
@@ -142,6 +161,12 @@ class WeatherViewModel @Inject constructor(
     private suspend fun updateLocationWeather(location: Location) {
         try {
             _isLocationLoading.value = true
+
+            // Sprawdź połączenie z internetem
+            if (!NetworkUtils.isNetworkAvailable(context)) {
+                return
+            }
+
             val weatherResponse = repository.getCurrentWeatherByCoordinates(
                 location.latitude,
                 location.longitude
@@ -160,6 +185,13 @@ class WeatherViewModel @Inject constructor(
     private suspend fun getWeatherForLocation(location: Location, setAsMain: Boolean = false) {
         try {
             _isLoading.value = true
+
+            // Sprawdź połączenie z internetem
+            if (!NetworkUtils.isNetworkAvailable(context)) {
+                _error.value = context.getString(R.string.error_network)
+                return
+            }
+
             val weatherResponse = repository.getCurrentWeatherByCoordinates(
                 location.latitude,
                 location.longitude
@@ -201,6 +233,13 @@ class WeatherViewModel @Inject constructor(
                 _isLoading.value = true
                 _error.value = null
 
+                // Sprawdź połączenie z internetem
+                if (!NetworkUtils.isNetworkAvailable(context)) {
+                    _error.value = context.getString(R.string.error_network)
+                    _isLoading.value = false
+                    return@launch
+                }
+
                 val weatherResponse = repository.getCurrentWeather(city)
                 _currentWeatherState.value = weatherResponse
                 _astronomicalData.value = AstronomicalData.fromWeatherResponse(weatherResponse)
@@ -234,6 +273,14 @@ class WeatherViewModel @Inject constructor(
             try {
                 _isSearching.value = true
                 _error.value = null
+
+                // Sprawdź połączenie z internetem
+                if (!NetworkUtils.isNetworkAvailable(context)) {
+                    _error.value = context.getString(R.string.error_network)
+                    _isSearching.value = false
+                    return@launch
+                }
+
                 val results = repository.searchCity(query)
                 _searchResults.value = results
             } catch (e: Exception) {
@@ -249,6 +296,11 @@ class WeatherViewModel @Inject constructor(
     fun getUVIndex(latitude: Double, longitude: Double) {
         viewModelScope.launch {
             try {
+                // Sprawdź połączenie z internetem
+                if (!NetworkUtils.isNetworkAvailable(context)) {
+                    return@launch
+                }
+
                 val response = repository.getCurrentUVIndex(latitude, longitude)
                 _uvIndexState.value = response
 
@@ -264,6 +316,11 @@ class WeatherViewModel @Inject constructor(
     fun getAirQuality(latitude: Double, longitude: Double) {
         viewModelScope.launch {
             try {
+                // Sprawdź połączenie z internetem
+                if (!NetworkUtils.isNetworkAvailable(context)) {
+                    return@launch
+                }
+
                 val response = repository.getCurrentAirQuality(latitude, longitude)
                 _airQualityState.value = response
             } catch (e: Exception) {
@@ -276,6 +333,11 @@ class WeatherViewModel @Inject constructor(
     fun getWeatherAlerts(latitude: Double, longitude: Double) {
         viewModelScope.launch {
             try {
+                // Sprawdź połączenie z internetem
+                if (!NetworkUtils.isNetworkAvailable(context)) {
+                    return@launch
+                }
+
                 val response = repository.getWeatherAlerts(latitude, longitude)
                 _alertsState.value = response.alerts
             } catch (e: Exception) {
@@ -291,6 +353,12 @@ class WeatherViewModel @Inject constructor(
     fun getDayData(timestamp: Long) {
         viewModelScope.launch {
             try {
+                // Sprawdź połączenie z internetem
+                if (!NetworkUtils.isNetworkAvailable(context)) {
+                    _error.value = context.getString(R.string.error_network)
+                    return@launch
+                }
+
                 val calendar = Calendar.getInstance()
                 calendar.timeInMillis = timestamp * 1000
 

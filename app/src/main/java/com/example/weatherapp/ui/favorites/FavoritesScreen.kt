@@ -1,3 +1,5 @@
+// app/src/main/java/com/example/weatherapp/ui/favorites/FavoritesScreen.kt
+
 package com.example.weatherapp.ui.favorites
 
 import androidx.compose.foundation.background
@@ -46,16 +48,19 @@ fun FavoritesScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.screen_favorites)) },
                 navigationIcon = {
+                    // Upewniamy się, że strzałka jest widoczna poprzez ustawienie odpowiedniego kontrastu
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             Icons.Default.ArrowBack,
                             contentDescription = stringResource(R.string.action_back),
-                            tint = Color.White
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp) // Zwiększamy rozmiar ikony
                         )
                     }
                 },
-                backgroundColor = Color.Transparent,
-                elevation = 0.dp
+                backgroundColor = Color(0xFF2E3346), // Ciemniejszy kolor tła dla kontrastu
+                contentColor = Color.White, // Biały kolor tekstu dla lepszego kontrastu
+                elevation = 4.dp // Dodajemy cień, aby oddzielić pasek od tła
             )
         }
     ) { paddingValues ->

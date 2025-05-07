@@ -7,4 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Kluczowe kolory dla Sky Check -->
+    <color name="skycheck_primary">#0D47A1</color>
+    <color name="skycheck_primary_dark">#1A237E</color>
+    <color name="skycheck_accent">#42A5F5</color>
+    <color name="skycheck_light">#BBDEFB</color>
+
 </resources>

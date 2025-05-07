@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">WeatherApp</string>
+
+    <string name="app_name">Sky Check</string>
+
 
     <!-- Ogólne -->
     <string name="error_location">Błąd lokalizacji: %1$s</string>
@@ -104,7 +106,7 @@
     <string name="favorite_remove">Usuń z ulubionych</string>
 
     <!-- Splash screen -->
-    <string name="splash_app_name">Catch The Sun</string>
+    <string name="splash_app_name">Sky Check</string>
 
     <!-- Dni tygodnia -->
     <string name="monday">Poniedziałek</string>

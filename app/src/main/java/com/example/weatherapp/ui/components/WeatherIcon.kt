@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/weatherapp/ui/components/WeatherIcon.kt
 package com.example.weatherapp.ui.components
 
 import androidx.compose.animation.core.*
@@ -21,10 +20,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun WeatherIcon(iconCode: String, modifier: Modifier = Modifier, tint: Color = Color.White) {
-    // Efekt animacji
     val infiniteTransition = rememberInfiniteTransition()
-
-    // Subtelna animacja dla słońca (pulsowanie)
     val sunScale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = 1.2f,
@@ -33,8 +29,6 @@ fun WeatherIcon(iconCode: String, modifier: Modifier = Modifier, tint: Color = C
             repeatMode = RepeatMode.Reverse
         )
     )
-
-    // Subtelna animacja dla chmur (ruch)
     val cloudTranslation by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 5f,
@@ -43,8 +37,6 @@ fun WeatherIcon(iconCode: String, modifier: Modifier = Modifier, tint: Color = C
             repeatMode = RepeatMode.Reverse
         )
     )
-
-    // Animacja dla deszczu (spadanie)
     val rainRotation by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 10f,
@@ -53,52 +45,42 @@ fun WeatherIcon(iconCode: String, modifier: Modifier = Modifier, tint: Color = C
             repeatMode = RepeatMode.Reverse
         )
     )
-
-    // Wybieranie ikony i koloru tła w zależności od kodu pogodowego
     val (symbol, backgroundColor, animModifier) = when {
-        // Słońce
         iconCode.contains("01") -> Triple(
             "☀️",
             Color(0xFFFFA000),
             Modifier.scale(if (iconCode.contains("d")) sunScale else 1f)
         )
-        // Częściowe zachmurzenie
         iconCode.contains("02") || iconCode.contains("03") -> Triple(
             "⛅",
             Color(0xFF78909C),
             Modifier.rotate(cloudTranslation)
         )
-        // Zachmurzenie
         iconCode.contains("04") -> Triple(
             "☁️",
             Color(0xFF546E7A),
             Modifier.rotate(cloudTranslation)
         )
-        // Deszcz
         iconCode.contains("09") || iconCode.contains("10") -> Triple(
             "🌧️",
             Color(0xFF42A5F5),
             Modifier.rotate(rainRotation)
         )
-        // Burza
         iconCode.contains("11") -> Triple(
             "⚡",
             Color(0xFF5C6BC0),
             Modifier.scale(sunScale)
         )
-        // Śnieg
         iconCode.contains("13") -> Triple(
             "❄️",
             Color(0xFFB3E5FC),
             Modifier.rotate(rainRotation)
         )
-        // Mgła
         iconCode.contains("50") -> Triple(
             "🌫️",
             Color(0xFF90A4AE),
             Modifier.scale(1f)
         )
-        // Domyślnie
         else -> Triple(
             "🌤️",
             Color(0xFF8D6E63),

@@ -1,4 +1,3 @@
-// Plik: app/src/main/java/com/example/weatherapp/ui/details/DayDetailsScreen.kt
 package com.example.weatherapp.ui.details
 
 import androidx.compose.foundation.background
@@ -36,8 +35,6 @@ fun DayDetailsScreen(
     val weatherColors = LocalWeatherColors.current
     val currentWeather = weatherViewModel.currentWeatherState.value
     val cityName = currentWeather?.name ?: ""
-
-    // Filtrujemy prognozę dla wybranego dnia
     val dayForecast = remember(forecastItems, date) {
         forecastItems.filter {
             val calendar1 = Calendar.getInstance().apply { timeInMillis = it.dt * 1000 }
@@ -47,8 +44,6 @@ fun DayDetailsScreen(
                     calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)
         }
     }
-
-    // Pobieramy dane z WeatherViewModel
     val uvIndex = weatherViewModel.uvIndexState.value
     val airQuality = weatherViewModel.airQualityState.value
     val alerts = weatherViewModel.alertsState.value
@@ -96,7 +91,6 @@ fun DayDetailsScreen(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Dodajemy nazwę miasta na górze
                     if (cityName.isNotEmpty()) {
                         Text(
                             text = cityName,
@@ -109,46 +103,32 @@ fun DayDetailsScreen(
                                 .padding(bottom = 16.dp)
                         )
                     }
-
-                    // Podsumowanie dnia
                     DaySummaryCard(dayForecast)
 
                     Spacer(modifier = Modifier.height(16.dp))
-
-                    // Dane astronomiczne
                     if (astronomicalData != null) {
                         AstronomicalCard(astronomicalData = astronomicalData)
                         Spacer(modifier = Modifier.height(16.dp))
                     }
-
-                    // Indeks UV
                     if (uvIndex != null) {
                         UVIndexCard(uvIndex = uvIndex)
                         Spacer(modifier = Modifier.height(16.dp))
                     }
-
-                    // Jakość powietrza
                     if (airQuality != null) {
                         AirQualityCard(airQuality = airQuality)
                         Spacer(modifier = Modifier.height(16.dp))
                     }
-
-                    // Informacje o opadach
                     if (precipitationData != null) {
                         PrecipitationCard(precipitationInfo = precipitationData)
                         Spacer(modifier = Modifier.height(16.dp))
                     }
-
-                    // Alerty pogodowe
                     if (alerts != null && alerts.isNotEmpty()) {
                         WeatherAlertsCard(
                             alerts = alerts,
-                            onViewAllAlerts = {}  // W widoku szczegółowym nie potrzebujemy nawigacji
+                            onViewAllAlerts = {}
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                     }
-
-                    // Godzinowe prognozy
                     HourlyDetailCard(dayForecast)
                 }
             }

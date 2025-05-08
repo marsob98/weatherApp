@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/weatherapp/ui/components/UVIndexCard.kt
 package com.example.weatherapp.ui.components
 
 import androidx.compose.foundation.background
@@ -23,8 +22,6 @@ fun UVIndexCard(uvIndex: UVIndexResponse?) {
 
     val weatherColors = LocalWeatherColors.current
     val recommendation = UVRecommendation.getRecommendation(uvIndex.value)
-
-    // Gradient koloru w zależności od wartości UV
     val gradientColors = when {
         uvIndex.value < 3 -> listOf(Color(0xFF4CAF50), Color(0xFF8BC34A)) // Zielony
         uvIndex.value < 6 -> listOf(Color(0xFFFFEB3B), Color(0xFFFFC107)) // Żółty
@@ -58,7 +55,6 @@ fun UVIndexCard(uvIndex: UVIndexResponse?) {
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Okrąg z indeksem UV
                 Box(
                     modifier = Modifier
                         .size(80.dp)

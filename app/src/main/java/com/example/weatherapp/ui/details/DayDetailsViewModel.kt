@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/weatherapp/ui/details/DayDetailsViewModel.kt
 package com.example.weatherapp.ui.details
 
 import androidx.compose.runtime.State

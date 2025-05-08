@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/weatherapp/ui/components/LocationWeatherCard.kt
 package com.example.weatherapp.ui.components
 
 import androidx.compose.animation.core.*
@@ -23,15 +22,12 @@ fun LocationWeatherCard(
     onRefreshLocation: () -> Unit
 ) {
     val weatherColors = LocalWeatherColors.current
-
-    // Animacja dla przycisku odświeżania
     var isRefreshing by remember { mutableStateOf(false) }
     val rotationState = remember { Animatable(0f) }
 
     LaunchedEffect(isLoading) {
         isRefreshing = isLoading
         if (isLoading) {
-            // Rozpocznij obracanie
             rotationState.animateTo(
                 targetValue = rotationState.value + 360f,
                 animationSpec = infiniteRepeatable(
@@ -40,7 +36,6 @@ fun LocationWeatherCard(
                 )
             )
         } else {
-            // Zatrzymaj animację
             rotationState.stop()
         }
     }

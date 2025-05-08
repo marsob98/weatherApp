@@ -1,4 +1,3 @@
-// Plik: app/src/main/java/com/example/weatherapp/data/remote/api/WeatherApi.kt
 package com.example.weatherapp.data.remote.api
 
 import com.example.weatherapp.data.remote.model.*
@@ -76,7 +75,7 @@ interface WeatherApi {
     suspend fun getOneCallData(
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
-        @Query("exclude") exclude: String = "minutely,hourly", // Wykluczamy niepotrzebne dane
+        @Query("exclude") exclude: String = "minutely,hourly",
         @Query("appid") apiKey: String,
         @Query("units") units: String = "metric",
         @Query("lang") lang: String = "pl"

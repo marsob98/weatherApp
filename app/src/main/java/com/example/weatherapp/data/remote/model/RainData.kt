@@ -1,4 +1,3 @@
-// Plik: app/src/main/java/com/example/weatherapp/data/remote/model/RainData.kt
 package com.example.weatherapp.data.remote.model
 
 import com.google.gson.annotations.SerializedName

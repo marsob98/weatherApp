@@ -64,8 +64,6 @@ fun WeatherAlertsCard(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Wyświetlamy maksymalnie 2 aktywne alerty
             alerts.take(2).forEach { alert ->
                 val severity = alert.getAlertSeverity()
 

@@ -30,20 +30,17 @@ fun CurrentWeatherCard(
     var isFavourite by remember { mutableStateOf(false) }
     val weatherColors = LocalWeatherColors.current
 
-    // Animowany kolor dla ikony serca
     val heartColor by animateColorAsState(
         targetValue = if (isFavourite) weatherColors.heartActive else weatherColors.heartInactive,
         animationSpec = tween(300)
     )
 
-    // Sprawdzamy, czy to miasto jest ulubione
     LaunchedEffect(weather.name) {
         favouriteViewModel.isFavourite(weather.name) { isFav ->
             isFavourite = isFav
         }
     }
 
-    // Używamy GlassmorphicCard zamiast standardowej Card
     GlassmorphicCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -56,7 +53,6 @@ fun CurrentWeatherCard(
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Dodajemy nazwę miasta na górze karty
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -72,16 +68,14 @@ fun CurrentWeatherCard(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(1f)
                 )
-
-                // Przycisk ulubione przenosimy do tego samego wiersza co nazwa miasta
                 IconButton(
                     onClick = {
-                        if (isFavourite) {
+                        isFavourite = if (isFavourite) {
                             favouriteViewModel.removeFavourite(weather.name)
-                            isFavourite = false
+                            false
                         } else {
                             favouriteViewModel.addFavourite(weather.name)
-                            isFavourite = true
+                            true
                         }
                     }
                 ) {
@@ -96,7 +90,6 @@ fun CurrentWeatherCard(
                 }
             }
 
-            // Główne informacje o temperaturze
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -104,7 +97,6 @@ fun CurrentWeatherCard(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Dodajemy ikonę pogody obok temperatury
                 WeatherIcon(
                     iconCode = weather.weather.firstOrNull()?.icon ?: "",
                     modifier = Modifier.size(60.dp)
@@ -120,7 +112,6 @@ fun CurrentWeatherCard(
                 )
             }
 
-            // Dodanie funkcji rozszerzającej capitalize() jeśli jest przestarzała
             val description = weather.weather.firstOrNull()?.description?.let {
                 it.replaceFirstChar { char ->
                     if (char.isLowerCase()) char.titlecase(Locale.getDefault())

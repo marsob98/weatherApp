@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/weatherapp/di/DayDetailsModule.kt
 package com.example.weatherapp.di
 
 import com.example.weatherapp.domain.repository.WeatherRepository

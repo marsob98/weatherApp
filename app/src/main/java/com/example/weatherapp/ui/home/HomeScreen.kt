@@ -1,4 +1,3 @@
-// Plik: app/src/main/java/com/example/weatherapp/ui/home/HomeScreen.kt
 package com.example.weatherapp.ui.home
 
 import android.Manifest
@@ -43,8 +42,6 @@ fun HomeScreen(
     val locationWeather = weatherViewModel.locationWeatherState.value
     val isLocationLoading = weatherViewModel.isLocationLoading.value
     val favourites by favouriteViewModel.favourites.collectAsState(initial = emptyList())
-
-    // Nowe stany dla dodatkowych funkcjonalności
     val uvIndex = weatherViewModel.uvIndexState.value
     val airQuality = weatherViewModel.airQualityState.value
     val alerts = weatherViewModel.alertsState.value
@@ -107,7 +104,7 @@ fun HomeScreen(
                             .align(Alignment.Center)
                             .padding(16.dp),
                         textAlign = TextAlign.Center
-                    ) // Plik: app/src/main/java/com/example/weatherapp/ui/home/HomeScreen.kt (kontynuacja)
+                    )
                 } else if (currentWeather != null && forecast != null) {
                     Column(
                         modifier = Modifier
@@ -116,7 +113,7 @@ fun HomeScreen(
                             .padding(bottom = 16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // Karta pogody opartej na lokalizacji (jeśli mamy uprawnienia)
+                        // Karta pogody opartej na lokalizacji
                         if (locationPermissionGranted) {
                             LocationWeatherCard(
                                 weather = locationWeather,

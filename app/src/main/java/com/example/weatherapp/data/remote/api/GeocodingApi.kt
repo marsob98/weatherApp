@@ -1,4 +1,3 @@
-// Nowy plik: app/src/main/java/com/example/weatherapp/data/remote/api/GeocodingApi.kt
 package com.example.weatherapp.data.remote.api
 
 import com.example.weatherapp.data.remote.model.GeocodingResponse

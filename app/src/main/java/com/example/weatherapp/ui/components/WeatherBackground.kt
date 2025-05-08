@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/weatherapp/ui/components/WeatherBackground.kt
 package com.example.weatherapp.ui.components
 
 import androidx.compose.foundation.background
@@ -19,8 +18,6 @@ fun WeatherBackground(
     content: @Composable () -> Unit
 ) {
     val weatherColors = LocalWeatherColors.current
-
-    // Sprawdzamy czy jest dzień czy noc
     val currentHour = LocalTime.now().hour
     val isNight = currentHour < 6 || currentHour > 19
 

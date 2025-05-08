@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/weatherapp/ui/components/GlassmorphicCard.kt
 package com.example.weatherapp.ui.components
 
 import androidx.compose.foundation.background

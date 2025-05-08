@@ -48,7 +48,6 @@ fun AstronomicalCard(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Wizualizacja wschodu i zachodu słońca
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -62,8 +61,6 @@ fun AstronomicalCard(
                     val width = size.width
                     val height = size.height
                     val arcRadius = height * 0.8f
-
-                    // Rysowanie łuku reprezentującego ścieżkę słońca
                     drawArc(
                         color = Color.Gray.copy(alpha = 0.3f),
                         startAngle = 180f,
@@ -73,8 +70,6 @@ fun AstronomicalCard(
                         size = androidx.compose.ui.geometry.Size(width, arcRadius * 2),
                         style = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round)
                     )
-
-                    // Rysowanie postępu dnia
                     drawArc(
                         color = Color(0xFFFFA000),
                         startAngle = 180f,
@@ -84,8 +79,6 @@ fun AstronomicalCard(
                         size = androidx.compose.ui.geometry.Size(width, arcRadius * 2),
                         style = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
                     )
-
-                    // Rysowanie pozycji słońca
                     val sunAngle = 180f + (180f * currentProgress / 100f)
                     val sunX = width / 2 + arcRadius * kotlin.math.cos(Math.toRadians(sunAngle.toDouble())).toFloat()
                     val sunY = height - arcRadius + arcRadius * kotlin.math.sin(Math.toRadians(sunAngle.toDouble())).toFloat()
@@ -99,7 +92,6 @@ fun AstronomicalCard(
                     }
                 }
 
-                // Etykiety wschodu i zachodu słońca
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

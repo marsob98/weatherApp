@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/weatherapp/ui/components/PrecipitationCard.kt
 package com.example.weatherapp.ui.components
 
 import androidx.compose.foundation.layout.*
@@ -78,8 +77,6 @@ fun PrecipitationCard(precipitationInfo: PrecipitationInfo?) {
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Pasek intensywności opadów
             Column {
                 Text(
                     text = "Intensywność",
@@ -88,10 +85,6 @@ fun PrecipitationCard(precipitationInfo: PrecipitationInfo?) {
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
-
-                // Poprawiona wersja LinearProgressIndicator
-                // 1. Kolejność parametrów została dostosowana do API Material
-                // 2. Używamy Double zamiast Float w coerceIn
                 LinearProgressIndicator(
                     progress = (precipitationInfo.amount / 10.0).coerceIn(0.0, 1.0).toFloat(),
                     modifier = Modifier
@@ -122,8 +115,6 @@ fun PrecipitationCard(precipitationInfo: PrecipitationInfo?) {
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Zalecenia w zależności od intensywności
             Text(
                 text = "Zalecenia:",
                 style = MaterialTheme.typography.bodyLarge,

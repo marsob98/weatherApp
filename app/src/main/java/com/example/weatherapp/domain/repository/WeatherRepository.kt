@@ -25,22 +25,15 @@ class WeatherRepository @Inject constructor(
     suspend fun getForecastByCoordinates(latitude: Double, longitude: Double): ForecastResponse {
         return weatherApi.getForecastByCoordinates(latitude, longitude, apiKey)
     }
-
-    // Metoda do wyszukiwania miast
     suspend fun searchCity(query: String): List<GeocodingResponse> {
         return geocodingApi.searchCity(query, 5, apiKey)
     }
-
-    // Indeks UV
     suspend fun getCurrentUVIndex(latitude: Double, longitude: Double): UVIndexResponse {
         return weatherApi.getCurrentUVIndex(latitude, longitude, apiKey)
     }
-
     suspend fun getForecastUVIndex(latitude: Double, longitude: Double): List<UVIndexResponse> {
         return weatherApi.getForecastUVIndex(latitude, longitude, 5, apiKey)
     }
-
-    // Jakość powietrza
     suspend fun getCurrentAirQuality(latitude: Double, longitude: Double): AirQualityResponse {
         return weatherApi.getCurrentAirQuality(latitude, longitude, apiKey)
     }
@@ -48,8 +41,6 @@ class WeatherRepository @Inject constructor(
     suspend fun getForecastAirQuality(latitude: Double, longitude: Double): AirQualityResponse {
         return weatherApi.getForecastAirQuality(latitude, longitude, apiKey)
     }
-
-    // Alerty pogodowe i dane one-call
     suspend fun getWeatherAlerts(latitude: Double, longitude: Double): AlertResponse {
         return weatherApi.getOneCallData(latitude, longitude, "minutely,hourly", apiKey)
     }

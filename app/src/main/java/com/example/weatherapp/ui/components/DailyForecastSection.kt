@@ -1,5 +1,3 @@
-// app/src/main/java/com/example/weatherapp/ui/components/DailyForecastSection.kt
-
 package com.example.weatherapp.ui.components
 
 import androidx.compose.foundation.clickable
@@ -22,7 +20,6 @@ fun DailyForecastSection(
     forecast: ForecastResponse,
     onDayClick: (Long) -> Unit = {}
 ) {
-    // Grupujemy prognozę po dniach
     val dailyForecast = forecast.list.groupBy {
         val date = Date(it.dt * 1000)
         val cal = Calendar.getInstance()
@@ -97,8 +94,6 @@ fun DailyForecastItem(
             color = weatherColors.textPrimary,
             modifier = Modifier.width(60.dp)
         )
-
-        // Dodajemy animowaną ikonę pogody
         WeatherIcon(iconCode = iconCode)
 
         Text(

@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/weatherapp/ui/components/HourlyForecastSection.kt
 package com.example.weatherapp.ui.components
 
 import androidx.compose.foundation.horizontalScroll
@@ -68,7 +67,6 @@ fun HourlyForecastItem(forecastItem: ForecastItem) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Dodajemy animowaną ikonę pogody
         WeatherIcon(
             iconCode = forecastItem.weather.firstOrNull()?.icon ?: "",
             modifier = Modifier.size(40.dp)

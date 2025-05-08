@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/weatherapp/data/remote/model/AstronomicalData.kt
 package com.example.weatherapp.data.remote.model
 
 import java.text.SimpleDateFormat

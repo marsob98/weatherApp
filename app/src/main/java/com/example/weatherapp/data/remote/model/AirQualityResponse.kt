@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/weatherapp/data/remote/model/AirQualityResponse.kt
 package com.example.weatherapp.data.remote.model
 
 import com.google.gson.annotations.SerializedName

@@ -10,28 +10,27 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.*
+import org.mockito.Mock
 import org.mockito.Mockito.*
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
+import org.mockito.junit.MockitoJUnitRunner
 
-@RunWith(RobolectricTestRunner::class)
-@Config(sdk = [33])
+@RunWith(MockitoJUnitRunner::class)
 class NetworkUtilsTest {
 
+    @Mock
     private lateinit var context: Context
+
+    @Mock
     private lateinit var connectivityManager: ConnectivityManager
+
+    @Mock
     private lateinit var network: Network
+
+    @Mock
     private lateinit var networkCapabilities: NetworkCapabilities
 
     @Before
     fun setup() {
-        // Inicjalizacja mocków
-        context = mock(Context::class.java)
-        connectivityManager = mock(ConnectivityManager::class.java)
-        network = mock(Network::class.java)
-        networkCapabilities = mock(NetworkCapabilities::class.java)
-
         // Mockowanie klasy Log
         MockLog.mock()
 

@@ -15,15 +15,12 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.*
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 
-@RunWith(RobolectricTestRunner::class)
-@Config(sdk = [33])
+@RunWith(MockitoJUnitRunner::class)
 class LocationManagerTest {
 
     @Mock
@@ -42,12 +39,6 @@ class LocationManagerTest {
 
     @Before
     fun setup() {
-        // Inicjalizacja mocków
-        context = mock(Context::class.java)
-        fusedLocationClient = mock(FusedLocationProviderClient::class.java)
-        locationTask = mock(Task::class.java)
-        location = mock(Location::class.java)
-
         // Mockowanie klasy Log
         MockLog.mock()
 

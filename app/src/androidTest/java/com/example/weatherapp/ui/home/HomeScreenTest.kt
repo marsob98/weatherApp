@@ -3,7 +3,6 @@ package com.example.weatherapp.ui.home
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.weatherapp.data.remote.model.*
 import com.example.weatherapp.ui.theme.WeatherAppTheme

@@ -1,10 +1,13 @@
-package com.example.weatherapp.ui
+package com.example.weatherapp
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.weatherapp.ui.Screen
+import com.example.weatherapp.ui.WeatherNavigation
+import junit.framework.TestCase.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
